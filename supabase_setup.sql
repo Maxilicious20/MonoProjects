@@ -24,13 +24,23 @@ CREATE TABLE IF NOT EXISTS tags (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- MANUAL STEP: Create storage bucket for tag icons
+-- MANUAL STEP: Create storage buckets
 -- You MUST do this manually in Supabase:
+-- 
+-- Bucket 1: tag_icons
 -- 1. Go to Storage section in Supabase dashboard
 -- 2. Create a new bucket named "tag_icons"
 -- 3. Make it public by unchecking "Private bucket"
 -- 4. Enable public access in bucket settings
--- This cannot be done via SQL
+--
+-- Bucket 2: mono-projects-files (for project file uploads)
+-- 1. Go to Storage section in Supabase dashboard
+-- 2. Create a new bucket named "mono-projects-files"
+-- 3. Make it public by unchecking "Private bucket"
+-- 4. Enable public access in bucket settings
+-- 5. This is where all .zip, .tar, .gz, .rar, .html project files will be stored
+--
+-- These cannot be done via SQL
 
 -- Create projects table
 CREATE TABLE IF NOT EXISTS projects (
@@ -42,6 +52,9 @@ CREATE TABLE IF NOT EXISTS projects (
   updated_at TEXT,
   content TEXT,
   created_by TEXT NOT NULL,
+  file_path TEXT,
+  file_url TEXT,
+  file_name TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -53,6 +66,9 @@ CREATE TABLE IF NOT EXISTS project_versions (
   content TEXT,
   description TEXT,
   created_by TEXT NOT NULL,
+  file_path TEXT,
+  file_url TEXT,
+  file_name TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(project_id, version_number)
 );

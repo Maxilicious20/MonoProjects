@@ -433,6 +433,55 @@
       }
     }
 
+    // Upload file to Supabase Storage
+    async function uploadFileToStorage(file, storagePath) {
+      const url = `${SUPABASE_URL}/storage/v1/object/mono-projects-files/${storagePath}`;
+      const options = {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        },
+        body: file
+      };
+      
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Upload failed: ${error}`);
+        }
+        return { path: storagePath, url: `${SUPABASE_URL}/storage/v1/object/public/mono-projects-files/${storagePath}` };
+      } catch (err) {
+        console.error("Storage upload error:", err);
+        throw err;
+      }
+    }
+
+    // Download file from Supabase Storage
+    async function downloadFileFromStorage(filePath, fileName) {
+      // Construct the full storage URL
+      const url = `${SUPABASE_URL}/storage/v1/object/public/mono-projects-files/${filePath}`;
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Download failed: ${response.statusText}`);
+        }
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName || 'project_file';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      } catch (err) {
+        console.error("Storage download error:", err);
+        throw err;
+      }
+    }
+
     // Dynamic state management
     let state = {
       currentUserAccount: null, 
@@ -1189,18 +1238,26 @@ Mono Projects Repository - Secure Archive Stream.`;
       const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
       const currentStamp = new Date().toLocaleDateString('en-US', dateOpts);
 
-      const newProj = {
-        id: projId,
-        name: name,
-        image_url: thumb,
-        tags: checkedTags,
-        is_pro: isPro,
-        updated_at: currentStamp,
-        content: content || "No description provided.",
-        created_by: state.currentUserAccount.username
-      };
-
       try {
+        // Upload project file to Supabase Storage
+        showToast("Uploading project file...", "info");
+        const storagePath = `projects/${projId}/${projFile.name}`;
+        const fileUploadResult = await uploadFileToStorage(projFile, storagePath);
+        
+        const newProj = {
+          id: projId,
+          name: name,
+          image_url: thumb,
+          tags: checkedTags,
+          is_pro: isPro,
+          updated_at: currentStamp,
+          content: content || "No description provided.",
+          created_by: state.currentUserAccount.username,
+          file_path: fileUploadResult.path,
+          file_url: fileUploadResult.url,
+          file_name: projFile.name
+        };
+
         await supabaseRequest('projects', 'POST', newProj);
         
         // Create analytics record for new project
@@ -1226,8 +1283,8 @@ Mono Projects Repository - Secure Archive Stream.`;
         document.getElementById('uploadForm').reset();
         document.getElementById('projImagePreview').innerHTML = '<i class="fa-solid fa-image text-neutral-600 text-3xl"></i>';
       } catch (err) {
-        console.error("Saving project failure:", err);
-        showToast("Error saving project data.", "error");
+        console.error("Upload/save project failure:", err);
+        showToast("Error uploading or saving project. Check console.", "error");
       }
     }
     window.handleUploadSubmit = handleUploadSubmit;
@@ -1513,39 +1570,33 @@ Mono Projects Repository - Secure Archive Stream.`;
           );
         }
 
-        // Get version content
-        let contentToDownload = currentProjectDetail.content;
+        // Determine which file to download
+        let fileUrl = currentProjectDetail.file_url;
+        let fileName = currentProjectDetail.file_name || `${currentProjectDetail.name.replace(/[^a-z0-9]/gi, '_')}_v${versionNum || '1'}.zip`;
+        
         if (versionNum > 0) {
           const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}&version_number=eq.${versionNum}`);
           if (versions && versions.length > 0) {
-            contentToDownload = versions[0].content;
+            const version = versions[0];
+            // Use version file if available, otherwise use original
+            if (version.file_url) {
+              fileUrl = version.file_url;
+              fileName = version.file_name || fileName;
+            }
           }
         }
 
-        // Trigger download
-        const fileContent = `=====================================================
-MONO PROJECTS ARCHIVE - ${currentProjectDetail.name}
-Version: ${versionNum || 'Current'}
-Downloaded By: ${state.currentUserAccount.username}
-Download Date: ${new Date().toLocaleString()}
-AI Models / Tags: ${(currentProjectDetail.tags || []).join(', ')}
-=====================================================
+        // Download from Storage
+        if (!fileUrl) {
+          showToast("No project file available for download.", "error");
+          return;
+        }
 
---- PROJECT CONTENT & CONFIGURATION ---
-${contentToDownload || "Placeholder deployment file."}
-
------------------------------------------------------
-Mono Projects Repository - Secure Archive Stream.`;
-
-        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${currentProjectDetail.name.replace(/[^a-z0-9]/gi, '_')}_v${versionNum || '1'}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        showToast(`Downloaded: ${link.download}`, "success");
+        showToast(`Downloading: ${fileName}`, "info");
+        // Use the full file path stored in the database
+        await downloadFileFromStorage(currentProjectDetail.file_path, fileName);
+        
+        showToast(`Downloaded: ${fileName}`, "success");
       } catch (err) {
         console.error("Download error:", err);
         showToast("Error processing download.", "error");
