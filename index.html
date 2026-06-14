@@ -233,8 +233,8 @@
 
         <div>
           <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Upload Project File</label>
-          <input type="file" id="projFile" required class="w-full bg-brand-black text-white text-xs rounded-xl px-3 py-2 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none file:mr-2 file:bg-brand-accent file:text-black file:px-3 file:py-1 file:rounded-lg file:border-0 file:font-bold file:text-xs" accept=".zip,.tar,.gz,.rar" />
-          <p class="text-xs text-neutral-500 mt-1">Supported: .zip, .tar, .gz, .rar</p>
+          <input type="file" id="projFile" required class="w-full bg-brand-black text-white text-xs rounded-xl px-3 py-2 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none file:mr-2 file:bg-brand-accent file:text-black file:px-3 file:py-1 file:rounded-lg file:border-0 file:font-bold file:text-xs" accept=".zip,.tar,.gz,.rar,.html" />
+          <p class="text-xs text-neutral-500 mt-1">Supported: .zip, .tar, .gz, .rar, .html</p>
         </div>
 
         <div>
@@ -1108,6 +1108,39 @@ Mono Projects Repository - Secure Archive Stream.`;
     }
     window.selectPresetThumbnail = selectPresetThumbnail;
 
+    // Allowed file types for project uploads
+    const ALLOWED_FILE_TYPES = ['.zip', '.tar', '.gz', '.rar', '.html'];
+    const ALLOWED_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'application/gzip', 'application/x-gzip', 'application/x-tar', 'application/x-rar-compressed', 'text/html'];
+
+    function validateProjectFile(file) {
+      if (!file) return { valid: false, message: 'Please upload a project file.' };
+      
+      // Check file extension
+      const fileName = file.name.toLowerCase();
+      const hasValidExtension = ALLOWED_FILE_TYPES.some(ext => fileName.endsWith(ext));
+      
+      // Check MIME type
+      const hasValidMimeType = ALLOWED_MIME_TYPES.includes(file.type) || file.type === '';
+      
+      if (!hasValidExtension) {
+        return { 
+          valid: false, 
+          message: `Invalid file type. Supported formats: ${ALLOWED_FILE_TYPES.join(', ')}` 
+        };
+      }
+      
+      // Maximum file size: 100MB
+      const maxSize = 100 * 1024 * 1024;
+      if (file.size > maxSize) {
+        return { 
+          valid: false, 
+          message: 'File size exceeds 100MB limit.' 
+        };
+      }
+      
+      return { valid: true, message: '' };
+    }
+
     async function handleUploadSubmit(e) {
       e.preventDefault();
       if (!state.currentUserAccount || !state.currentUserAccount.is_admin) {
@@ -1132,8 +1165,10 @@ Mono Projects Repository - Secure Archive Stream.`;
         return;
       }
 
-      if (!projFile) {
-        showToast("Please upload a project file.", "error");
+      // Validate project file
+      const fileValidation = validateProjectFile(projFile);
+      if (!fileValidation.valid) {
+        showToast(fileValidation.message, "error");
         return;
       }
 
@@ -1196,6 +1231,7 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
     }
     window.handleUploadSubmit = handleUploadSubmit;
+    window.validateProjectFile = validateProjectFile;
 
     // Add image preview for uploaded files
     document.addEventListener('DOMContentLoaded', () => {
