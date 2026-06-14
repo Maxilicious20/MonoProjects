@@ -1014,11 +1014,11 @@ Mono Projects Repository - Secure Archive Stream.`;
         iconUrl = await uploadTagIcon(tagIconFile);
       }
 
+      // NOTE: icon_url field will be added after SQL migrations are run in Supabase
       const newTag = {
         id: tagId,
         name: tagNameInput,
         icon: 'fa-solid fa-tag',
-        icon_url: iconUrl,
         color: randomColor,
         created_at: new Date().toISOString()
       };
