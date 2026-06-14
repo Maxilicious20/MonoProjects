@@ -7,9 +7,7 @@
   <meta name="description" content="A premium repository of verified AI projects, models, and assets." />
   <meta name="author" content="Mono Projects" />
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts & FontAwesome 6 -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -53,10 +51,8 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-brand-accent selection:text-black">
 
   <div id="app" class="flex-grow flex flex-col pb-16">
-    <!-- Navigation Bar -->
     <header class="sticky top-0 z-40 backdrop-blur-md bg-brand-black/90 border-b border-neutral-900/60 transition-all duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <!-- Logo (MONO Projects) -->
         <a href="#" class="flex items-center gap-3 group">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-accent to-brand-purple flex items-center justify-center shadow-lg shadow-brand-accent/20 group-hover:scale-105 transition-transform">
             <i class="fa-solid fa-cubes text-white text-lg"></i>
@@ -66,9 +62,7 @@
           </div>
         </a>
 
-        <!-- Auth & Upload Panel -->
         <div class="flex items-center gap-3">
-          <!-- Admin Tools Container (revealed only for Maxilicious20) -->
           <div id="adminControls" class="hidden flex items-center gap-2">
             <button id="adminTagsBtn" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-800 px-4 py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2">
               <i class="fa-solid fa-tags text-brand-accent"></i> Manage Tags
@@ -78,7 +72,6 @@
             </button>
           </div>
 
-          <!-- User Badge / Sign In Trigger -->
           <div id="userSection" class="flex items-center gap-3">
             <button onclick="openAuthModal()" class="bg-white hover:bg-neutral-100 text-black px-5 py-2 rounded-xl font-bold text-sm shadow-md transition-all">
               Sign In
@@ -88,7 +81,6 @@
       </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 text-center md:text-left">
       <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-neutral-200 to-neutral-400">
         MONO Projects Hub
@@ -98,18 +90,14 @@
       </p>
     </section>
 
-    <!-- Filter & Search Controls -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
       <div class="bg-brand-card/60 p-4 rounded-2xl border border-neutral-900/60 flex flex-col lg:flex-row gap-4 justify-between items-center">
-        <!-- Dynamic Tag Filter Scroll Container -->
         <div class="w-full lg:w-3/4 flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="tagFiltersContainer">
-          <!-- Dynamic category pills will be populated here -->
           <button class="whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold bg-white text-black shadow-md">
             All
           </button>
         </div>
 
-        <!-- Search input field -->
         <div class="relative w-full lg:w-1/4">
           <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-neutral-500">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -119,11 +107,8 @@
       </div>
     </section>
 
-    <!-- Main Projects Space -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow">
-      <!-- Grid container -->
       <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Dynamic loading states / projects populated here -->
         <div class="col-span-full py-20 flex flex-col items-center justify-center text-neutral-500">
           <i class="fa-solid fa-circle-notch animate-spin text-3xl text-brand-accent mb-4"></i>
           <p>Connecting securely to platform databases...</p>
@@ -132,10 +117,8 @@
     </main>
   </div>
 
-  <!-- Auth Modal (Login / Sign Up) -->
   <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
     <div class="bg-brand-card border border-neutral-800 w-full max-w-md rounded-2xl p-6 relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-      <!-- Glow decoration -->
       <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-accent/10 rounded-full blur-2xl"></div>
       
       <div class="flex justify-between items-center mb-6">
@@ -145,7 +128,6 @@
         </button>
       </div>
 
-      <!-- Sign Up / In forms -->
       <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Username</label>
@@ -171,7 +153,6 @@
     </div>
   </div>
 
-  <!-- Tag Management Modal (Maxilicious20 Only) -->
   <div id="tagsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
     <div class="bg-brand-card border border-neutral-800 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]">
       <div class="flex justify-between items-center mb-6">
@@ -183,7 +164,6 @@
         </button>
       </div>
 
-      <!-- Add Tag Form -->
       <form id="tagForm" onsubmit="handleTagSubmit(event)" class="space-y-4 border-b border-neutral-800/80 pb-6 mb-6">
         <h4 class="text-xs font-bold text-brand-accent uppercase tracking-widest">Create New Tag</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -202,18 +182,15 @@
         </button>
       </form>
 
-      <!-- Active Tags List -->
       <div>
         <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">Currently Active Tags</h4>
         <div id="modalTagsContainer" class="space-y-2">
-          <!-- Populated dynamically -->
           <p class="text-xs text-neutral-500 italic">No tags created yet. Fill the form to add tags.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Upload Modal (Maxilicious20 Only) -->
   <div id="uploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
     <div class="bg-brand-card border border-neutral-800 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]">
       <div class="flex justify-between items-center mb-6">
@@ -273,10 +250,8 @@
     </div>
   </div>
 
-  <!-- Project Details Modal -->
   <div id="projectDetailsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
     <div class="bg-brand-card border border-neutral-800 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-      <!-- Modal Header -->
       <div class="flex justify-between items-center p-6 border-b border-neutral-800">
         <div>
           <h2 id="detailProjectName" class="text-2xl font-bold text-white"></h2>
@@ -287,21 +262,17 @@
         </button>
       </div>
 
-      <!-- Modal Body (scrollable) -->
       <div class="overflow-y-auto flex-1 p-6 space-y-6">
         
-        <!-- Project Cover Image -->
         <div class="aspect-video w-full rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
           <img id="detailProjectImage" src="" alt="" class="w-full h-full object-cover" />
         </div>
 
-        <!-- Project Description & Tags -->
         <div>
           <h3 class="text-sm font-bold text-brand-accent mb-2 uppercase">Description</h3>
           <p id="detailProjectContent" class="text-sm text-neutral-300 line-clamp-4"></p>
         </div>
 
-        <!-- Analytics Stats -->
         <div class="grid grid-cols-3 gap-3">
           <div class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg text-center">
             <div class="text-2xl font-bold text-brand-accent" id="statDownloads">0</div>
@@ -317,7 +288,6 @@
           </div>
         </div>
 
-        <!-- Version Selection -->
         <div>
           <h3 class="text-sm font-bold text-brand-accent mb-2 uppercase">Project Version</h3>
           <div class="flex gap-2 items-center">
@@ -328,12 +298,10 @@
           </div>
         </div>
 
-        <!-- Version Change Notes -->
         <div id="versionChangeNotes" class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg">
           <p id="versionDescription" class="text-sm text-neutral-300"></p>
         </div>
 
-        <!-- Admin Update Section -->
         <div id="adminUpdateSection" class="hidden border-t border-neutral-800 pt-4">
           <h3 class="text-sm font-bold text-brand-accent mb-3 uppercase flex items-center gap-2">
             <i class="fa-solid fa-cloud-arrow-up"></i> Create New Version
@@ -353,11 +321,9 @@
           </div>
         </div>
 
-        <!-- Comments Section -->
         <div>
           <h3 class="text-sm font-bold text-brand-accent mb-3 uppercase">Community Comments (<span id="commentCount">0</span>)</h3>
           
-          <!-- Post Comment Form (only if logged in) -->
           <div id="commentForm" class="mb-4 hidden">
             <div class="flex gap-2">
               <textarea id="commentInput" rows="2" class="flex-1 bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="Share your thoughts..."></textarea>
@@ -367,14 +333,12 @@
             </div>
           </div>
 
-          <!-- Comments List -->
           <div id="commentsList" class="space-y-3 max-h-64 overflow-y-auto">
             <p class="text-xs text-neutral-500 italic">No comments yet. Be the first to share!</p>
           </div>
         </div>
       </div>
 
-      <!-- Modal Footer -->
       <div class="border-t border-neutral-800 p-6 bg-brand-black/50 flex gap-3">
         <button onclick="downloadProjectVersion()" class="flex-1 bg-white hover:bg-neutral-100 text-black py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
           <i class="fa-solid fa-download"></i> Download
@@ -386,10 +350,8 @@
     </div>
   </div>
 
-  <!-- Toast Notification System -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Supabase & App Logic Modules -->
   <script type="module">
     // Supabase configuration
     const SUPABASE_URL = "https://tbrbazbrisyufuxhtgws.supabase.co";
@@ -431,6 +393,32 @@
         console.error(`Supabase API Error [${endpoint}]:`, err);
         throw err;
       }
+    }
+
+    // Hilfsfunktion für den Upload in Supabase Storage
+    async function uploadFileToStorage(file, path) {
+      const bucketName = 'project-files'; 
+      const url = `${SUPABASE_URL}/storage/v1/object/${bucketName}/${path}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': file.type
+        },
+        body: file
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Storage Upload fehlgeschlagen: ${errorText}`);
+      }
+
+      return {
+        path: path,
+        url: `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${path}`
+      };
     }
 
     // Convert file to text content
@@ -708,19 +696,16 @@
         return `
           <div class="bg-brand-card hover:bg-brand-cardHover border border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-accent/5 flex flex-col group relative">
             
-            <!-- Tags Floating Wrapper -->
             <div class="p-4 flex items-center gap-1.5 flex-wrap z-10 absolute pointer-events-none top-0 left-0">
               ${tagBadges}
               ${proBadge}
             </div>
 
-            <!-- Visual Cover -->
             <div class="relative aspect-video w-full bg-neutral-950 overflow-hidden">
               <img src="${thumbUrl}" alt="${proj.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x400/111115/ffffff?text=${encodeURIComponent(proj.name)}';" />
               <div class="absolute inset-0 bg-gradient-to-t from-brand-black/95 via-brand-black/30 to-brand-black/25"></div>
             </div>
 
-            <!-- Details Panel -->
             <div class="p-5 flex-grow flex flex-col justify-between">
               <div>
                 <h4 class="text-white font-bold text-base tracking-wide line-clamp-1 group-hover:text-brand-accent transition-colors" title="${proj.name}">
@@ -734,7 +719,6 @@
                 </p>
               </div>
 
-              <!-- Action Buttons -->
               <div class="mt-5 flex gap-2">
                 <button onclick="openProjectDetails('${proj.id}')" class="flex-1 py-3 bg-brand-accent hover:opacity-90 text-black font-extrabold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-md shadow-brand-accent/25">
                   <i class="fa-solid fa-eye"></i> View Details
@@ -979,7 +963,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           throw new Error('Failed to upload icon');
         }
         
-        // Return public URL
         return `${SUPABASE_URL}/storage/v1/object/public/tag_icons/${fileName}`;
       } catch (err) {
         console.error("Icon upload error:", err);
@@ -997,7 +980,9 @@ Mono Projects Repository - Secure Archive Stream.`;
             const reader = new FileReader();
             reader.onload = (event) => {
               const preview = document.getElementById('tagIconPreview');
-              preview.innerHTML = `<img src="${event.target.result}" alt="Icon preview" class="w-full h-full object-cover rounded-lg" />`;
+              if (preview) {
+                preview.innerHTML = `<img src="${event.target.result}" alt="Icon preview" class="w-full h-full object-cover rounded-lg" />`;
+              }
             };
             reader.readAsDataURL(file);
           }
@@ -1019,7 +1004,6 @@ Mono Projects Repository - Secure Archive Stream.`;
 
       const tagId = tagNameInput.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
       
-      // Auto-assign rotating colors
       const colors = ['cyan', 'indigo', 'emerald', 'amber', 'rose', 'violet'];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
       
@@ -1043,7 +1027,6 @@ Mono Projects Repository - Secure Archive Stream.`;
       try {
         await supabaseRequest('tags', 'POST', newTag);
         
-        // Reload tags
         const tagsList = await supabaseRequest('tags?order=created_at.desc');
         state.tags = Array.isArray(tagsList) ? tagsList : [];
         renderTagPills();
@@ -1064,7 +1047,6 @@ Mono Projects Repository - Secure Archive Stream.`;
       try {
         await supabaseRequest(`tags?id=eq.${encodeURIComponent(tagId)}`, 'DELETE');
         
-        // Reload tags
         const tagsList = await supabaseRequest('tags?order=created_at.desc');
         state.tags = Array.isArray(tagsList) ? tagsList : [];
         renderTagPills();
@@ -1108,7 +1090,7 @@ Mono Projects Repository - Secure Archive Stream.`;
         return;
       }
       document.getElementById('uploadModal').classList.remove('hidden');
-      renderFormTags(); // Sync newest dynamic options on open
+      renderFormTags(); 
     }
     window.openUploadModal = openUploadModal;
 
@@ -1130,18 +1112,14 @@ Mono Projects Repository - Secure Archive Stream.`;
     }
     window.selectPresetThumbnail = selectPresetThumbnail;
 
-    // Allowed file types for project uploads
     const ALLOWED_FILE_TYPES = ['.zip', '.tar', '.gz', '.rar', '.html'];
     const ALLOWED_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'application/gzip', 'application/x-gzip', 'application/x-tar', 'application/x-rar-compressed', 'text/html'];
 
     function validateProjectFile(file) {
       if (!file) return { valid: false, message: 'Please upload a project file.' };
       
-      // Check file extension
       const fileName = file.name.toLowerCase();
       const hasValidExtension = ALLOWED_FILE_TYPES.some(ext => fileName.endsWith(ext));
-      
-      // Check MIME type
       const hasValidMimeType = ALLOWED_MIME_TYPES.includes(file.type) || file.type === '';
       
       if (!hasValidExtension) {
@@ -1151,7 +1129,6 @@ Mono Projects Repository - Secure Archive Stream.`;
         };
       }
       
-      // Maximum file size: 100MB
       const maxSize = 100 * 1024 * 1024;
       if (file.size > maxSize) {
         return { 
@@ -1187,14 +1164,12 @@ Mono Projects Repository - Secure Archive Stream.`;
         return;
       }
 
-      // Validate project file
       const fileValidation = validateProjectFile(projFile);
       if (!fileValidation.valid) {
         showToast(fileValidation.message, "error");
         return;
       }
 
-      // Handle image URL (from file or manual URL)
       let thumb = 'https://placehold.co/600x400/1a1a1a/00d9ff?text=Mono+Project';
       if (projImageFile) {
         const reader = new FileReader();
@@ -1207,14 +1182,14 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
 
       const projId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
-
       const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
       const currentStamp = new Date().toLocaleDateString('en-US', dateOpts);
 
       try {
-        // Upload project file to Supabase Storage
         showToast("Uploading project file...", "info");
         const storagePath = `projects/${projId}/${projFile.name}`;
+        
+        // Die Funktion wird nun korrekt per await aufgerufen
         const fileUploadResult = await uploadFileToStorage(projFile, storagePath);
         
         const newProj = {
@@ -1233,7 +1208,6 @@ Mono Projects Repository - Secure Archive Stream.`;
 
         await supabaseRequest('projects', 'POST', newProj);
         
-        // Create analytics record for new project
         try {
           await supabaseRequest('project_analytics', 'POST', {
             project_id: projId,
@@ -1246,7 +1220,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           console.warn("Analytics creation not critical:", e);
         }
         
-        // Reload projects
         const projectsList = await supabaseRequest('projects?order=created_at.desc');
         state.projects = Array.isArray(projectsList) ? projectsList : [];
         renderProjects();
@@ -1263,7 +1236,6 @@ Mono Projects Repository - Secure Archive Stream.`;
     window.handleUploadSubmit = handleUploadSubmit;
     window.validateProjectFile = validateProjectFile;
 
-    // Add image preview for uploaded files
     document.addEventListener('DOMContentLoaded', () => {
       const projImageFile = document.getElementById('projImageFile');
       if (projImageFile) {
@@ -1291,7 +1263,6 @@ Mono Projects Repository - Secure Archive Stream.`;
 
       currentProjectDetail = project;
 
-      // Track view
       try {
         await supabaseRequest('project_views', 'POST', {
           project_id: projectId,
@@ -1301,22 +1272,15 @@ Mono Projects Repository - Secure Archive Stream.`;
         console.error("View tracking error:", e);
       }
 
-      // Load and display project data
       document.getElementById('detailProjectName').textContent = project.name;
       document.getElementById('detailProjectCreator').textContent = `Created by ${project.created_by}`;
       document.getElementById('detailProjectImage').src = project.image_url || 'image_0ecb52.jpg';
       document.getElementById('detailProjectContent').textContent = project.content || 'No description available';
 
-      // Load analytics
       await loadProjectAnalytics(projectId);
-
-      // Load versions
       await loadProjectVersions(projectId);
-
-      // Load comments
       await loadProjectComments(projectId);
 
-      // Show/hide admin section
       const adminSection = document.getElementById('adminUpdateSection');
       if (state.currentUserAccount?.is_admin) {
         adminSection.classList.remove('hidden');
@@ -1324,7 +1288,6 @@ Mono Projects Repository - Secure Archive Stream.`;
         adminSection.classList.add('hidden');
       }
 
-      // Show comment form if logged in
       const commentForm = document.getElementById('commentForm');
       if (state.currentUserAccount) {
         commentForm.classList.remove('hidden');
@@ -1373,7 +1336,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           return `<option value="${v.version_number}" ${isLatest ? 'selected' : ''}>${isLatest ? 'Version ' + v.version_number + ' (Latest)' : 'Version ' + v.version_number}</option>`;
         }).join('');
 
-        // Show first version details
         selector.onchange = (e) => {
           const vNum = parseInt(e.target.value);
           const selectedVersion = versions.find(v => v.version_number === vNum);
@@ -1383,7 +1345,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           }
         };
 
-        // Show first version
         if (versions.length > 0) {
           document.getElementById('versionDescription').textContent = versions[0].description || 'No description';
           document.getElementById('versionInfo').textContent = `Updated: ${new Date(versions[0].created_at).toLocaleDateString()}`;
@@ -1448,7 +1409,6 @@ Mono Projects Repository - Secure Archive Stream.`;
         await loadProjectComments(currentProjectDetail.id);
         showToast("Comment posted!", "success");
 
-        // Update analytics
         const analytics = await supabaseRequest(`project_analytics?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}`);
         if (analytics && analytics.length > 0) {
           await supabaseRequest(
@@ -1481,11 +1441,9 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
 
       try {
-        // Get latest version number
         const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}&order=version_number.desc&limit=1`);
         const newVersionNum = (versions && versions.length > 0) ? versions[0].version_number + 1 : 1;
 
-        // Create new version
         await supabaseRequest('project_versions', 'POST', {
           project_id: currentProjectDetail.id,
           version_number: newVersionNum,
@@ -1494,7 +1452,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           created_by: state.currentUserAccount.username
         });
 
-        // Update project's updated_at
         const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
         const updateStamp = new Date().toLocaleDateString('en-US', dateOpts);
         await supabaseRequest(
@@ -1526,14 +1483,12 @@ Mono Projects Repository - Secure Archive Stream.`;
       const versionNum = parseInt(document.getElementById('versionSelector').value) || 0;
 
       try {
-        // Track download
         await supabaseRequest('project_downloads', 'POST', {
           project_id: currentProjectDetail.id,
           username: state.currentUserAccount.username,
           version_number: versionNum
         });
 
-        // Update analytics
         const analytics = await supabaseRequest(`project_analytics?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}`);
         if (analytics && analytics.length > 0) {
           await supabaseRequest(
@@ -1543,7 +1498,6 @@ Mono Projects Repository - Secure Archive Stream.`;
           );
         }
 
-        // Get file content
         let fileContent = currentProjectDetail.file_content;
         
         if (versionNum > 0) {
