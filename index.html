@@ -192,55 +192,17 @@
             <input type="text" id="tagName" required class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="e.g., Gemini 1.5 Pro" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Icon Representation</label>
-            <div class="relative">
-              <select id="tagIcon" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none appearance-none">
-                <option value="fa-solid fa-gemini">♊ Gemini (Astrology/Platform)</option>
-                <option value="fa-solid fa-robot">🤖 Robot (Agent/AI)</option>
-                <option value="fa-solid fa-brain">🧠 Brain (Model/Network)</option>
-                <option value="fa-solid fa-bolt">⚡ Bolt (Speed/Fable)</option>
-                <option value="fa-solid fa-code">💻 Code (Developer/Grok)</option>
-                <option value="fa-solid fa-wand-magic-sparkles">✨ Sparkles (Creative/GenAI)</option>
-                <option value="fa-solid fa-terminal">⌨️ Terminal (CLI/Systems)</option>
-                <option value="fa-solid fa-microchip">🔌 Chip (Hardware/Llama)</option>
-                <option value="fa-solid fa-music">🎵 Music (Suno/Audio)</option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
-                <i class="fa-solid fa-chevron-down text-xs"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Custom Icon Upload (Optional)</label>
+            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Tag Icon (Upload Custom)</label>
             <input type="file" id="tagIconFile" accept="image/*" class="w-full bg-brand-black text-white text-xs rounded-xl px-3 py-2 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none file:mr-2 file:bg-brand-accent file:text-black file:px-3 file:py-1 file:rounded-lg file:border-0 file:font-bold file:text-xs" />
             <div id="tagIconPreview" class="w-12 h-12 rounded-lg bg-brand-black border border-neutral-800 flex items-center justify-center mt-2">
               <i class="fa-solid fa-image text-neutral-600 text-xl"></i>
             </div>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Accent Theme Color</label>
-            <div class="relative">
-              <select id="tagColor" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none appearance-none">
-                <option value="cyan">Cyan Highlight</option>
-                <option value="indigo">Indigo/Purple</option>
-                <option value="emerald">Emerald/Green</option>
-                <option value="amber">Amber/Orange</option>
-                <option value="violet">Violet/Lavender</option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
-                <i class="fa-solid fa-chevron-down text-xs"></i>
-              </div>
-            </div>
-          </div>
-          <div class="flex items-end">
-            <button type="submit" class="w-full bg-neutral-100 hover:bg-white text-black font-bold text-sm py-3 rounded-xl transition-all shadow-md active:scale-95">
-              Save Active Tag
-            </button>
-          </div>
         </div>
+
+        <button type="submit" class="w-full bg-neutral-100 hover:bg-white text-black font-bold text-sm py-3 rounded-xl transition-all shadow-md active:scale-95">
+          Create Tag
+        </button>
       </form>
 
       <!-- Active Tags List -->
@@ -1033,8 +995,6 @@ Mono Projects Repository - Secure Archive Stream.`;
       if (!state.currentUserAccount || !state.currentUserAccount.is_admin) return;
 
       const tagNameInput = document.getElementById('tagName').value.trim();
-      const tagIconInput = document.getElementById('tagIcon').value;
-      const tagColorInput = document.getElementById('tagColor').value;
       const tagIconFile = document.getElementById('tagIconFile').files[0];
 
       if (!tagNameInput) {
@@ -1043,6 +1003,10 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
 
       const tagId = tagNameInput.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+      
+      // Auto-assign rotating colors
+      const colors = ['cyan', 'indigo', 'emerald', 'amber', 'rose', 'violet'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
       
       let iconUrl = null;
       if (tagIconFile) {
@@ -1053,9 +1017,9 @@ Mono Projects Repository - Secure Archive Stream.`;
       const newTag = {
         id: tagId,
         name: tagNameInput,
-        icon: tagIconInput,
+        icon: 'fa-solid fa-tag',
         icon_url: iconUrl,
-        color: tagColorInput,
+        color: randomColor,
         created_at: new Date().toISOString()
       };
 
