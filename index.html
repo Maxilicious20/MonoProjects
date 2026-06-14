@@ -986,20 +986,16 @@ Mono Projects Repository - Secure Archive Stream.`;
       try {
         const fileExt = file.name.split('.').pop();
         const fileName = `tag_${Date.now()}.${fileExt}`;
-        const fileBuffer = await file.arrayBuffer();
-        
-        // Create FormData for file upload
-        const formData = new FormData();
-        formData.append('files', file);
         
         const url = `${SUPABASE_URL}/storage/v1/object/tag_icons/${fileName}`;
         const response = await fetch(url, {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': file.type
           },
-          body: formData
+          body: file
         });
         
         if (!response.ok) {
