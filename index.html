@@ -320,6 +320,7 @@
     // Supabase configuration
     const SUPABASE_URL = "https://tbrbazbrisyufuxhtgws.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRicmJhemJyaXN5dWZ1eGh0Z3dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyODQ1ODksImV4cCI6MjA5Njg2MDU4OX0.-NzctCSmODMs-YkJFsmeA_W72i9PfWvf1aZHrXZaThA";
+    const appId = 'mono-projects';
     
     // Helper function to make API calls to Supabase
     async function supabaseRequest(endpoint, method = 'GET', body = null) {
@@ -338,14 +339,24 @@
         options.body = JSON.stringify(body);
       }
       
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Request failed: ${response.statusText}`);
+      try {
+        const response = await fetch(url, options);
+        const text = await response.text();
+        
+        if (!response.ok) {
+          try {
+            const error = JSON.parse(text);
+            throw new Error(error.message || `Request failed: ${response.statusText}`);
+          } catch (e) {
+            throw new Error(`Request failed: ${response.statusText} - ${text}`);
+          }
+        }
+        
+        return text ? JSON.parse(text) : null;
+      } catch (err) {
+        console.error(`Supabase API Error [${endpoint}]:`, err);
+        throw err;
       }
-      
-      const text = await response.text();
-      return text ? JSON.parse(text) : null;
     }
 
     // Dynamic state management
