@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mono Projects - AI Platform Hub</title>
+  <meta name="description" content="A premium repository of verified AI projects, models, and assets." />
+  <meta name="author" content="Mono Projects" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & FontAwesome 6 -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              black: '#08080a',
+              card: '#111115',
+              cardHover: '#16161c',
+              accent: '#06b6d4', // Premium Cyan
+              purple: '#6366f1', // Electric Indigo
+              gold: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbar for beautiful tag horizontal scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    body {
+      background-color: #08080a;
+      color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-accent selection:text-black">
+
+  <div id="app" class="flex-grow flex flex-col pb-16">
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-brand-black/90 border-b border-neutral-900/60 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- Logo (MONO Projects) -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-accent to-brand-purple flex items-center justify-center shadow-lg shadow-brand-accent/20 group-hover:scale-105 transition-transform">
+            <i class="fa-solid fa-cubes text-white text-lg"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-white font-extrabold text-lg tracking-wider group-hover:text-brand-accent transition-colors">MONO <span class="font-normal text-neutral-400 text-sm">Projects</span></span>
+          </div>
+        </a>
+
+        <!-- Auth & Upload Panel -->
+        <div class="flex items-center gap-3">
+          <!-- Admin Tools Container (revealed only for Maxilicious20) -->
+          <div id="adminControls" class="hidden flex items-center gap-2">
+            <button id="adminTagsBtn" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-800 px-4 py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2">
+              <i class="fa-solid fa-tags text-brand-accent"></i> Manage Tags
+            </button>
+            <button id="adminUploadBtn" class="bg-gradient-to-r from-brand-accent to-brand-purple hover:opacity-90 text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-lg shadow-brand-accent/25">
+              <i class="fa-solid fa-plus"></i> Upload Project
+            </button>
+          </div>
+
+          <!-- User Badge / Sign In Trigger -->
+          <div id="userSection" class="flex items-center gap-3">
+            <button onclick="openAuthModal()" class="bg-white hover:bg-neutral-100 text-black px-5 py-2 rounded-xl font-bold text-sm shadow-md transition-all">
+              Sign In
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 text-center md:text-left">
+      <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-neutral-200 to-neutral-400">
+        MONO Projects Hub
+      </h1>
+      <p class="mt-2 text-neutral-400 text-base max-w-2xl">
+        Download verified project architectures and pipelines. Discover high-quality tools, assets, and source codes built for modern AI workflows.
+      </p>
+    </section>
+
+    <!-- Filter & Search Controls -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div class="bg-brand-card/60 p-4 rounded-2xl border border-neutral-900/60 flex flex-col lg:flex-row gap-4 justify-between items-center">
+        <!-- Dynamic Tag Filter Scroll Container -->
+        <div class="w-full lg:w-3/4 flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="tagFiltersContainer">
+          <!-- Dynamic category pills will be populated here -->
+          <button class="whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold bg-white text-black shadow-md">
+            All
+          </button>
+        </div>
+
+        <!-- Search input field -->
+        <div class="relative w-full lg:w-1/4">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-neutral-500">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input type="text" id="searchInput" placeholder="Search projects..." class="w-full bg-brand-black text-white placeholder-neutral-500 text-sm rounded-xl pl-10 pr-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Projects Space -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow">
+      <!-- Grid container -->
+      <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamic loading states / projects populated here -->
+        <div class="col-span-full py-20 flex flex-col items-center justify-center text-neutral-500">
+          <i class="fa-solid fa-circle-notch animate-spin text-3xl text-brand-accent mb-4"></i>
+          <p>Connecting securely to platform databases...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Auth Modal (Login / Sign Up) -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+    <div class="bg-brand-card border border-neutral-800 w-full max-w-md rounded-2xl p-6 relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <!-- Glow decoration -->
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-accent/10 rounded-full blur-2xl"></div>
+      
+      <div class="flex justify-between items-center mb-6">
+        <h3 id="authModalTitle" class="text-xl font-bold text-white">Create Account</h3>
+        <button onclick="closeAuthModal()" class="text-neutral-500 hover:text-white transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Sign Up / In forms -->
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Username</label>
+          <input type="text" id="authUsername" required class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" placeholder="Enter custom username" />
+          <p class="text-[11px] text-neutral-500 mt-1">Username must be unique. Admin account: <strong class="text-brand-accent">Maxilicious20</strong></p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Password</label>
+          <input type="password" id="authPassword" required class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" placeholder="••••••••" />
+        </div>
+
+        <div id="authErrorMsg" class="hidden text-red-500 text-xs bg-red-500/10 p-3 rounded-lg border border-red-500/20"></div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full bg-gradient-to-r from-brand-accent to-brand-purple text-white py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-brand-accent/10">
+          Sign Up
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-neutral-900 text-center text-xs text-neutral-400">
+        <span id="authToggleText">Already have an account?</span>
+        <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-brand-accent hover:underline ml-1 font-semibold">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tag Management Modal (Maxilicious20 Only) -->
+  <div id="tagsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+    <div class="bg-brand-card border border-neutral-800 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-tags text-brand-accent"></i> Dynamic Tag Manager
+        </h3>
+        <button onclick="closeTagsModal()" class="text-neutral-500 hover:text-white transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Add Tag Form -->
+      <form id="tagForm" onsubmit="handleTagSubmit(event)" class="space-y-4 border-b border-neutral-800/80 pb-6 mb-6">
+        <h4 class="text-xs font-bold text-brand-accent uppercase tracking-widest">Create New Tag</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Tag Name</label>
+            <input type="text" id="tagName" required class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="e.g., Gemini 1.5 Pro" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Icon Representation</label>
+            <div class="relative">
+              <select id="tagIcon" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none appearance-none">
+                <option value="fa-solid fa-gemini">♊ Gemini (Astrology/Platform)</option>
+                <option value="fa-solid fa-robot">🤖 Robot (Agent/AI)</option>
+                <option value="fa-solid fa-brain">🧠 Brain (Model/Network)</option>
+                <option value="fa-solid fa-bolt">⚡ Bolt (Speed/Fable)</option>
+                <option value="fa-solid fa-code">💻 Code (Developer/Grok)</option>
+                <option value="fa-solid fa-wand-magic-sparkles">✨ Sparkles (Creative/GenAI)</option>
+                <option value="fa-solid fa-terminal">⌨️ Terminal (CLI/Systems)</option>
+                <option value="fa-solid fa-microchip">🔌 Chip (Hardware/Llama)</option>
+                <option value="fa-solid fa-music">🎵 Music (Suno/Audio)</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Accent Theme Color</label>
+            <div class="relative">
+              <select id="tagColor" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none appearance-none">
+                <option value="cyan">Cyan Highlight</option>
+                <option value="indigo">Indigo/Purple</option>
+                <option value="emerald">Emerald/Green</option>
+                <option value="amber">Amber/Orange</option>
+                <option value="rose">Rose/Pink</option>
+                <option value="violet">Violet/Lavender</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end">
+            <button type="submit" class="w-full bg-neutral-100 hover:bg-white text-black font-bold text-sm py-3 rounded-xl transition-all shadow-md active:scale-95">
+              Save Active Tag
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Active Tags List -->
+      <div>
+        <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">Currently Active Tags</h4>
+        <div id="modalTagsContainer" class="space-y-2">
+          <!-- Populated dynamically -->
+          <p class="text-xs text-neutral-500 italic">No tags created yet. Fill the form to add tags.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Modal (Maxilicious20 Only) -->
+  <div id="uploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+    <div class="bg-brand-card border border-neutral-800 w-full max-w-lg rounded-2xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-brand-accent"></i> Upload AI Project
+        </h3>
+        <button onclick="closeUploadModal()" class="text-neutral-500 hover:text-white transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Project File Name</label>
+          <input type="text" id="projName" required class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" placeholder="e.g., mono-neural-agent.zip" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Cover / Illustration Preview</label>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <button type="button" onclick="selectPresetThumbnail('image_0ecb52.jpg', this)" class="preset-thumb-btn border-2 border-brand-accent p-1 rounded-lg bg-neutral-900 overflow-hidden relative group">
+              <img src="image_0ecb52.jpg" class="w-full h-12 object-cover rounded-md opacity-80" onerror="this.src='https://placehold.co/120x80/202020/ffffff?text=Mono+Tech'" />
+              <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] font-bold text-white">Default</div>
+            </button>
+            <button type="button" onclick="selectPresetThumbnail('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60', this)" class="preset-thumb-btn border-2 border-transparent p-1 rounded-lg bg-neutral-900 overflow-hidden group">
+              <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=60" class="w-full h-12 object-cover rounded-md opacity-80" />
+              <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white">Cyber</div>
+            </button>
+            <button type="button" onclick="selectPresetThumbnail('https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?w=600&auto=format&fit=crop&q=60', this)" class="preset-thumb-btn border-2 border-transparent p-1 rounded-lg bg-neutral-900 overflow-hidden group">
+              <img src="https://images.unsplash.com/photo-1612287230202-1bf1d85d1bdf?w=600&auto=format&fit=crop&q=60" class="w-full h-12 object-cover rounded-md opacity-80" />
+              <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white">AI Art</div>
+            </button>
+          </div>
+          <div class="relative">
+            <input type="text" id="projImgUrl" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" placeholder="Or paste a custom image URL..." />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Select Active AI Models / Dynamic Tags</label>
+          <div class="flex flex-wrap gap-2 border border-neutral-850 p-3 rounded-xl bg-brand-black/60 min-h-[4rem]" id="formTagsContainer">
+            <!-- Populated via Javascript -->
+            <p class="text-xs text-neutral-500 italic">No dynamic tags available. Admin can add tags first.</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Target Contents / Custom Source Keys</label>
+          <textarea id="projContent" rows="3" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent transition-all" placeholder="Enter configuration codes, server access links or setup data stored safely in download files."></textarea>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="projIsPro" class="rounded bg-brand-black border-neutral-800 text-brand-accent focus:ring-brand-accent" />
+          <label for="projIsPro" class="text-xs font-semibold text-neutral-300">Mark as PRO system deployment</label>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-purple text-white py-3 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-brand-accent/20">
+          Publish & Save Project
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Firebase & App Logic Modules -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Setup environments and configurations
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mono-projects';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "mock-api-key",
+      authDomain: "mock-auth-domain",
+      projectId: "mock-project-id",
+      storageBucket: "mock-storage-bucket",
+      messagingSenderId: "mock-sender-id",
+      appId: "mock-app-id"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Dynamic state management
+    let state = {
+      firebaseUser: null,
+      currentUserAccount: null, 
+      projects: [],
+      tags: [], // Dynamically loaded tags!
+      selectedTag: "All",
+      searchQuery: "",
+      isSignUpMode: true,
+      selectedThumbnail: 'image_0ecb52.jpg'
+    };
+
+    function showToast(message, type = "success") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `p-4 rounded-xl shadow-lg border text-sm font-semibold flex items-center gap-3 bg-brand-card transition-all transform translate-y-5 opacity-0 pointer-events-auto max-w-sm`;
+      
+      let iconColor = "text-brand-accent";
+      let icon = "fa-circle-check";
+      if (type === "error") {
+        iconColor = "text-red-500";
+        icon = "fa-circle-exclamation";
+        toast.className += " border-red-500/20";
+      } else if (type === "info") {
+        iconColor = "text-blue-500";
+        icon = "fa-circle-info";
+        toast.className += " border-blue-500/20";
+      } else {
+        toast.className += " border-brand-accent/20";
+      }
+
+      toast.innerHTML = `
+        <i class="fa-solid ${icon} ${iconColor} text-lg shrink-0"></i>
+        <div class="text-neutral-200">${message}</div>
+      `;
+
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-y-5', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-5', 'opacity-0');
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }
+
+    window.showToast = showToast;
+
+    function initLocalStorageUser() {
+      const stored = localStorage.getItem(`${appId}_auth_session`);
+      if (stored) {
+        try {
+          state.currentUserAccount = JSON.parse(stored);
+          updateAuthUI();
+        } catch (e) {
+          localStorage.removeItem(`${appId}_auth_session`);
+        }
+      }
+    }
+
+    function saveUserSession(accountData) {
+      localStorage.setItem(`${appId}_auth_session`, JSON.stringify(accountData));
+      state.currentUserAccount = accountData;
+      updateAuthUI();
+    }
+
+    function clearUserSession() {
+      localStorage.removeItem(`${appId}_auth_session`);
+      state.currentUserAccount = null;
+      updateAuthUI();
+      showToast("Successfully signed out.", "info");
+    }
+    window.clearUserSession = clearUserSession;
+
+    async function initApp() {
+      // Sign in anonymously to authorized Firestore access
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          state.firebaseUser = await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          state.firebaseUser = await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.warn("Firestore Auth setup offline mode active:", err);
+      }
+
+      // Initialize session profile
+      initLocalStorageUser();
+
+      // Listen to Dynamic Tags Collection (Realtime)
+      try {
+        const tagsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tags');
+        onSnapshot(tagsCollectionRef, (snapshot) => {
+          const tagsList = [];
+          snapshot.forEach((doc) => {
+            tagsList.push({ id: doc.id, ...doc.data() });
+          });
+          state.tags = tagsList;
+          renderTagPills();
+          renderFormTags();
+          renderModalTagsList();
+          renderProjects(); // Re-render to pair newly synced tags accurately
+        }, (error) => {
+          console.error("Tags fetching error:", error);
+          state.tags = [];
+          renderTagPills();
+          renderFormTags();
+          renderModalTagsList();
+        });
+      } catch (e) {
+        console.warn("Tags listener attachment failure:", e);
+      }
+
+      // Listen to Projects Collection (Realtime)
+      try {
+        const projectsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
+        onSnapshot(projectsCollectionRef, (snapshot) => {
+          const projectsList = [];
+          snapshot.forEach((doc) => {
+            projectsList.push({ id: doc.id, ...doc.data() });
+          });
+          state.projects = projectsList;
+          renderProjects();
+        }, (error) => {
+          console.error("Projects stream error:", error);
+          state.projects = [];
+          renderProjects();
+        });
+      } catch (e) {
+        console.warn("Projects streaming bypass initialized:", e);
+      }
+    }
+
+    function renderTagPills() {
+      const container = document.getElementById('tagFiltersContainer');
+      
+      const allButtonActive = state.selectedTag === "All";
+      let pillsHTML = `
+        <button onclick="filterByTag('All')" class="whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          allButtonActive 
+            ? 'bg-white text-black shadow-md' 
+            : 'bg-brand-card/80 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-800/60'
+        }">
+          <i class="fa-solid fa-border-all mr-1"></i> All
+        </button>
+      `;
+
+      if (state.tags && state.tags.length > 0) {
+        pillsHTML += state.tags.map(tag => {
+          const isSelected = state.selectedTag === tag.name;
+          const colorClass = getAccentColorTailwind(tag.color);
+          
+          return `
+            <button onclick="filterByTag('${tag.name}')" class="whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              isSelected 
+                ? 'bg-white text-black shadow-md' 
+                : 'bg-brand-card/80 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-800/60'
+            }">
+              <i class="${tag.icon || 'fa-solid fa-tag'} ${isSelected ? 'text-black' : colorClass.text}"></i>
+              ${tag.name}
+            </button>
+          `;
+        }).join('');
+      }
+
+      container.innerHTML = pillsHTML;
+    }
+
+    function filterByTag(tagName) {
+      state.selectedTag = tagName;
+      renderTagPills();
+      renderProjects();
+    }
+    window.filterByTag = filterByTag;
+
+    // Dynamic Accent Parser Helpers
+    function getAccentColorTailwind(colorName) {
+      switch (colorName) {
+        case 'cyan': return { text: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400' };
+        case 'indigo': return { text: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' };
+        case 'emerald': return { text: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' };
+        case 'amber': return { text: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20 text-amber-400' };
+        case 'rose': return { text: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20 text-rose-400' };
+        case 'violet': return { text: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20 text-violet-400' };
+        default: return { text: 'text-neutral-400', bg: 'bg-neutral-500/10 border-neutral-500/20 text-neutral-400' };
+      }
+    }
+
+    function renderFormTags() {
+      const container = document.getElementById('formTagsContainer');
+      if (!state.tags || state.tags.length === 0) {
+        container.innerHTML = `<p class="text-xs text-neutral-500 italic">No dynamic tags have been created yet. Admin must add tags first before linking them to projects.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.tags.map(tag => {
+        const colorClass = getAccentColorTailwind(tag.color);
+        return `
+          <label class="flex items-center gap-2 bg-brand-black px-3 py-2 rounded-lg border border-neutral-800 cursor-pointer text-xs font-medium hover:border-brand-accent transition-all select-none">
+            <input type="checkbox" name="proj_tags" value="${tag.name}" class="rounded bg-brand-black border-neutral-700 text-brand-accent focus:ring-brand-accent" />
+            <span class="flex items-center gap-1.5">
+              <i class="${tag.icon || 'fa-solid fa-tag'} ${colorClass.text}"></i>
+              ${tag.name}
+            </span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function renderProjects() {
+      const grid = document.getElementById('projectsGrid');
+      const queryStr = state.searchQuery.toLowerCase().trim();
+
+      const filtered = state.projects.filter(proj => {
+        const matchesTag = state.selectedTag === "All" || (proj.tags && proj.tags.includes(state.selectedTag));
+        const matchesSearch = !queryStr || 
+          proj.name.toLowerCase().includes(queryStr) || 
+          (proj.tags && proj.tags.some(t => t.toLowerCase().includes(queryStr)));
+        return matchesTag && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-20 text-center text-neutral-500">
+            <i class="fa-solid fa-cubes-stacked text-4xl mb-4 text-neutral-800 animate-pulse"></i>
+            <p class="text-lg font-semibold text-white">No Mono Projects Found</p>
+            <p class="text-xs text-neutral-500 mt-2 max-w-sm mx-auto">
+              ${state.currentUserAccount?.isAdmin 
+                ? 'Create custom tags first using the Tag Manager, then publish a project to begin building your repository!' 
+                : 'No projects match your current selections. Sign in as the administrator to populate this catalog.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(proj => {
+        // Tag Badges mapped to our dynamic Firestore state
+        const tagBadges = (proj.tags || []).map(tName => {
+          const associatedTag = state.tags.find(t => t.name === tName);
+          const iconClass = associatedTag ? associatedTag.icon : 'fa-solid fa-tag';
+          const style = getAccentColorTailwind(associatedTag ? associatedTag.color : 'indigo');
+
+          return `
+            <span class="${style.bg} border text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1">
+              <i class="${iconClass}"></i> ${tName}
+            </span>
+          `;
+        }).join(' ');
+
+        // Pro system label indicator
+        const proBadge = proj.isPro ? `
+          <span class="bg-brand-gold/10 text-brand-gold border border-brand-gold/20 text-[10px] uppercase font-extrabold tracking-wider px-2 py-1 rounded-lg flex items-center gap-1">
+            <i class="fa-solid fa-circle-nodes"></i> PRO DEPLOYMENT
+          </span>
+        ` : '';
+
+        const thumbUrl = proj.imageUrl || 'image_0ecb52.jpg';
+
+        return `
+          <div class="bg-brand-card hover:bg-brand-cardHover border border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-accent/5 flex flex-col group relative">
+            
+            <!-- Tags Floating Wrapper -->
+            <div class="p-4 flex items-center gap-1.5 flex-wrap z-10 absolute pointer-events-none top-0 left-0">
+              ${tagBadges}
+              ${proBadge}
+            </div>
+
+            <!-- Visual Cover -->
+            <div class="relative aspect-video w-full bg-neutral-950 overflow-hidden">
+              <img src="${thumbUrl}" alt="${proj.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/600x400/111115/ffffff?text=${encodeURIComponent(proj.name)}';" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-black/95 via-brand-black/30 to-brand-black/25"></div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="p-5 flex-grow flex flex-col justify-between">
+              <div>
+                <h4 class="text-white font-bold text-base tracking-wide line-clamp-1 group-hover:text-brand-accent transition-colors" title="${proj.name}">
+                  ${proj.name}
+                </h4>
+                <p class="text-xs text-neutral-500 mt-1 flex items-center gap-1.5">
+                  <i class="fa-regular fa-clock"></i> Updated ${proj.updatedAt || 'Recent'}
+                </p>
+                <p class="text-xs text-neutral-400 mt-3 line-clamp-3 leading-relaxed">
+                  ${proj.content || 'Download contains verified integration configurations, architecture files, and prompt codes.'}
+                </p>
+              </div>
+
+              <!-- Action Downloader -->
+              <div class="mt-5">
+                <button onclick="triggerFileDownload('${proj.id}')" class="w-full py-3 bg-white hover:bg-neutral-100 text-black font-extrabold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-md shadow-white/5">
+                  <i class="fa-solid fa-download"></i> Download Project
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function triggerFileDownload(projectId) {
+      if (!state.currentUserAccount) {
+        showToast("Please sign in to your custom account to download resources.", "error");
+        openAuthModal(false); 
+        return;
+      }
+
+      const project = state.projects.find(p => p.id === projectId);
+      if (!project) {
+        showToast("The requested source file could not be fetched.", "error");
+        return;
+      }
+
+      try {
+        const fileContent = `=====================================================
+MONO PROJECTS ARCHIVE DEPLOYMENT FILE
+Project Name: ${project.name}
+Downloaded By: ${state.currentUserAccount.username}
+AI Models / Tags Utilized: ${(project.tags || []).join(', ')}
+=====================================================
+
+--- SYSTEM SOURCE KEYS & CONFIGURATION DATA ---
+${project.content || "Placeholder active pipeline config file. Standard dynamic Mono project package."}
+
+-----------------------------------------------------
+Mono Projects Repository - Secure Archive Stream.`;
+
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        
+        const finalFilename = project.name.endsWith('.zip') 
+          ? project.name.replace('.zip', '_mono_source.txt') 
+          : `${project.name}_mono_source.txt`;
+          
+        link.download = finalFilename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast(`Download Initiated: ${finalFilename}`, "success");
+      } catch (err) {
+        showToast("Error processing file download container.", "error");
+        console.error(err);
+      }
+    }
+    window.triggerFileDownload = triggerFileDownload;
+
+    function updateAuthUI() {
+      const userSection = document.getElementById('userSection');
+      const adminControls = document.getElementById('adminControls');
+
+      if (state.currentUserAccount) {
+        const username = state.currentUserAccount.username;
+        const isAdmin = state.currentUserAccount.isAdmin;
+
+        userSection.innerHTML = `
+          <div class="flex items-center gap-2">
+            <div class="flex flex-col text-right">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5 justify-end">
+                ${isAdmin ? '<span class="bg-brand-accent/20 text-brand-accent border border-brand-accent/30 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md flex items-center gap-0.5"><i class="fa-solid fa-crown"></i> Admin</span>' : ''}
+                ${username}
+              </span>
+              <span class="text-[10px] text-neutral-500">Mono Member</span>
+            </div>
+            <button onclick="clearUserSession()" title="Logout" class="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-red-500 hover:bg-red-500/10 hover:text-red-500 text-neutral-300 flex items-center justify-center transition-all">
+              <i class="fa-solid fa-power-off text-xs"></i>
+            </button>
+          </div>
+        `;
+
+        if (isAdmin) {
+          adminControls.classList.remove('hidden');
+        } else {
+          adminControls.classList.add('hidden');
+        }
+      } else {
+        userSection.innerHTML = `
+          <button onclick="openAuthModal()" class="bg-white hover:bg-neutral-100 text-black px-5 py-2 rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
+            Sign In
+          </button>
+        `;
+        adminControls.classList.add('hidden');
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById('authUsername').value.trim();
+      const passwordInput = document.getElementById('authPassword').value;
+      const errorMsg = document.getElementById('authErrorMsg');
+
+      if (!usernameInput || !passwordInput) {
+        errorMsg.textContent = "Please fill in all inputs.";
+        errorMsg.classList.remove('hidden');
+        return;
+      }
+
+      errorMsg.classList.add('hidden');
+
+      try {
+        const docId = usernameInput.toLowerCase(); 
+        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', docId);
+        const userSnap = await getDoc(userDocRef);
+
+        if (state.isSignUpMode) {
+          // Strict rule: Username is unique and can only be used once
+          if (userSnap.exists()) {
+            errorMsg.textContent = `Username "${usernameInput}" is already taken. Please choose another one.`;
+            errorMsg.classList.remove('hidden');
+            return;
+          }
+
+          const isAdmin = (usernameInput === "Maxilicious20");
+
+          const newAccount = {
+            username: usernameInput,
+            password: passwordInput, 
+            isAdmin: isAdmin,
+            createdAt: new Date().toISOString()
+          };
+
+          await setDoc(userDocRef, newAccount);
+          saveUserSession(newAccount);
+          showToast(`Account "${usernameInput}" created successfully!`, "success");
+          closeAuthModal();
+
+        } else {
+          // Sign In check
+          if (!userSnap.exists()) {
+            errorMsg.textContent = "Account not found. Please sign up.";
+            errorMsg.classList.remove('hidden');
+            return;
+          }
+
+          const existingUser = userSnap.data();
+          if (existingUser.password !== passwordInput) {
+            errorMsg.textContent = "Incorrect password. Please try again.";
+            errorMsg.classList.remove('hidden');
+            return;
+          }
+
+          saveUserSession(existingUser);
+          showToast(`Welcome back, ${existingUser.username}!`, "success");
+          closeAuthModal();
+        }
+      } catch (err) {
+        console.error("Auth process failure:", err);
+        errorMsg.textContent = "Database connectivity issues. Try again.";
+        errorMsg.classList.remove('hidden');
+      }
+    }
+    window.handleAuthSubmit = handleAuthSubmit;
+
+    function openAuthModal(signUpMode = true) {
+      state.isSignUpMode = signUpMode;
+      const modal = document.getElementById('authModal');
+      const title = document.getElementById('authModalTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleText = document.getElementById('authToggleText');
+      const toggleBtn = document.getElementById('authToggleBtn');
+      const errorMsg = document.getElementById('authErrorMsg');
+
+      errorMsg.classList.add('hidden');
+      document.getElementById('authUsername').value = "";
+      document.getElementById('authPassword').value = "";
+
+      if (signUpMode) {
+        title.textContent = "Create Account";
+        submitBtn.textContent = "Register Account";
+        toggleText.textContent = "Already have an account?";
+        toggleBtn.textContent = "Sign In";
+      } else {
+        title.textContent = "Sign In";
+        submitBtn.textContent = "Sign In";
+        toggleText.textContent = "Don't have an account?";
+        toggleBtn.textContent = "Create Account";
+      }
+
+      modal.classList.remove('hidden');
+    }
+    window.openAuthModal = openAuthModal;
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+    window.closeAuthModal = closeAuthModal;
+
+    function toggleAuthMode() {
+      openAuthModal(!state.isSignUpMode);
+    }
+    window.toggleAuthMode = toggleAuthMode;
+
+    function openTagsModal() {
+      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+        showToast("Unauthorised access.", "error");
+        return;
+      }
+      document.getElementById('tagsModal').classList.remove('hidden');
+      renderModalTagsList();
+    }
+    window.openTagsModal = openTagsModal;
+
+    function closeTagsModal() {
+      document.getElementById('tagsModal').classList.add('hidden');
+    }
+    window.closeTagsModal = closeTagsModal;
+
+    async function handleTagSubmit(e) {
+      e.preventDefault();
+      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) return;
+
+      const tagNameInput = document.getElementById('tagName').value.trim();
+      const tagIconInput = document.getElementById('tagIcon').value;
+      const tagColorInput = document.getElementById('tagColor').value;
+
+      if (!tagNameInput) {
+        showToast("Tag Name is required.", "error");
+        return;
+      }
+
+      const tagId = tagNameInput.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+
+      const newTag = {
+        id: tagId,
+        name: tagNameInput,
+        icon: tagIconInput,
+        color: tagColorInput,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tags', tagId), newTag);
+        showToast(`Tag "${tagNameInput}" successfully published!`, "success");
+        document.getElementById('tagForm').reset();
+      } catch (err) {
+        console.error("Save tag error:", err);
+        showToast("Error writing tag to Firestore.", "error");
+      }
+    }
+    window.handleTagSubmit = handleTagSubmit;
+
+    async function deleteTag(tagId) {
+      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) return;
+      try {
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tags', tagId));
+        showToast("Tag removed from list.", "info");
+      } catch (err) {
+        console.error("Delete tag failure:", err);
+        showToast("Failed to remove tag.", "error");
+      }
+    }
+    window.deleteTag = deleteTag;
+
+    function renderModalTagsList() {
+      const container = document.getElementById('modalTagsContainer');
+      if (!state.tags || state.tags.length === 0) {
+        container.innerHTML = `<p class="text-xs text-neutral-500 italic">No custom tags created yet. Use the form above to add tags.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.tags.map(tag => {
+        const style = getAccentColorTailwind(tag.color);
+        return `
+          <div class="flex items-center justify-between bg-brand-black p-3 rounded-xl border border-neutral-800">
+            <span class="${style.bg} border text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-2">
+              <i class="${tag.icon || 'fa-solid fa-tag'}"></i> ${tag.name}
+            </span>
+            <button onclick="deleteTag('${tag.id}')" class="text-neutral-500 hover:text-red-500 text-xs transition-all p-1.5">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openUploadModal() {
+      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+        showToast("Administrative authorisation required.", "error");
+        return;
+      }
+      document.getElementById('uploadModal').classList.remove('hidden');
+      renderFormTags(); // Sync newest dynamic options on open
+    }
+    window.openUploadModal = openUploadModal;
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+    }
+    window.closeUploadModal = closeUploadModal;
+
+    function selectPresetThumbnail(url, element) {
+      state.selectedThumbnail = url;
+      document.getElementById('projImgUrl').value = url;
+      
+      document.querySelectorAll('.preset-thumb-btn').forEach(btn => {
+        btn.classList.remove('border-brand-accent');
+        btn.classList.add('border-transparent');
+      });
+      element.classList.add('border-brand-accent');
+      element.classList.remove('border-transparent');
+    }
+    window.selectPresetThumbnail = selectPresetThumbnail;
+
+    async function handleUploadSubmit(e) {
+      e.preventDefault();
+      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+        showToast("Action forbidden.", "error");
+        return;
+      }
+
+      const name = document.getElementById('projName').value.trim();
+      const content = document.getElementById('projContent').value.trim();
+      const isPro = document.getElementById('projIsPro').checked;
+      const customImgUrl = document.getElementById('projImgUrl').value.trim();
+      
+      const checkedTags = [];
+      document.querySelectorAll('input[name="proj_tags"]:checked').forEach(cb => {
+        checkedTags.push(cb.value);
+      });
+
+      if (!name) {
+        showToast("Please provide project name.", "error");
+        return;
+      }
+
+      const projId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+      const thumb = customImgUrl || state.selectedThumbnail || 'image_0ecb52.jpg';
+
+      const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+      const currentStamp = new Date().toLocaleDateString('en-US', dateOpts);
+
+      const newProj = {
+        id: projId,
+        name: name,
+        imageUrl: thumb,
+        tags: checkedTags,
+        isPro: isPro,
+        updatedAt: currentStamp,
+        content: content || "Source deployment instructions.",
+        createdBy: state.currentUserAccount.username
+      };
+
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId), newProj);
+        showToast(`Project "${name}" published successfully!`, "success");
+        closeUploadModal();
+        document.getElementById('uploadForm').reset();
+      } catch (err) {
+        console.error("Saving project failure:", err);
+        showToast("Error saving project data.", "error");
+      }
+    }
+    window.handleUploadSubmit = handleUploadSubmit;
+
+    // Search and Input Event Handlers
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      renderProjects();
+    });
+
+    // Button trigger binds
+    document.getElementById('adminUploadBtn').addEventListener('click', openUploadModal);
+    document.getElementById('adminTagsBtn').addEventListener('click', openTagsModal);
+
+    // Bootstrap app on windows initialization complete
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</body>
+</html>
