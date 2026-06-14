@@ -1,5 +1,14 @@
 # 🚀 Quick Setup for New Features
 
+## ⚠️ IMPORTANT: Full Setup Required
+
+This setup involves **both backend (Supabase) AND frontend (Storage RLS policies)**. 
+If you skip any step, the app **will not work**!
+
+**Most common error:** "403 Unauthorized" during file upload = Storage Bucket RLS policies not configured (see Step 2)
+
+---
+
 ## What You Just Got
 
 ✅ **Comments & Discussions** - Users can discuss projects  
@@ -27,7 +36,7 @@ This creates 5 new tables:
 - `project_downloads` - Download logs
 - `project_views` - View tracking
 
-### Step 2: Create Storage Buckets
+### Step 2: Create Storage Buckets & Configure RLS Policies
 
 1. In Supabase, go to **Storage** section
 2. Create **two new buckets**:
@@ -43,6 +52,25 @@ This creates 5 new tables:
 - Name: `mono-projects-files`
 - Uncheck "Private bucket"
 - Click **Create**
+
+**3. Configure Storage RLS Policies**
+
+For each bucket (`tag_icons` and `mono-projects-files`):
+
+a) Go to **Storage** → Click the bucket → **Policies**
+b) Create a **SELECT policy** (for reading):
+   - Click **New Policy** → **For SELECT**
+   - Name: `public_read`
+   - Choose template: **Enable read access for all users**
+   - Click **Review** → **Save policy**
+
+c) Create an **INSERT policy** (for uploading):
+   - Click **New Policy** → **For INSERT**
+   - Name: `public_insert`
+   - Choose template: **Enable insert access for authenticated users**
+   - Click **Review** → **Save policy**
+
+Now your buckets are ready for file uploads & downloads!
 
 ### Step 3: Hard Refresh Browser
 

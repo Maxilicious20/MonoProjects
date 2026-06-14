@@ -131,6 +131,66 @@ ALTER TABLE project_downloads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE project_analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE project_views ENABLE ROW LEVEL SECURITY;
 
+-- ============== STORAGE BUCKET RLS POLICIES ==============
+-- Note: Storage buckets require policies to be set in the Supabase Dashboard
+-- Go to Storage → Policies for each bucket and set:
+-- 
+-- For bucket "mono-projects-files":
+-- - Allow SELECT (public read): Enable "Public" policy
+-- - Allow INSERT (authenticated users): Enable authenticated-insert policy
+-- - Allow UPDATE/DELETE (admins only): Configure custom policies
+--
+-- For bucket "tag_icons":
+-- - Allow SELECT (public read): Enable "Public" policy
+-- - Allow INSERT (authenticated users): Enable authenticated-insert policy
+
+-- ============== TABLE RLS POLICIES ==============
+
+-- Projects table - Everyone can read, only admins can insert/update
+CREATE POLICY "public_read_projects" ON projects
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "authenticated_insert_projects" ON projects
+  FOR INSERT
+  WITH CHECK (true);
+
+-- Tags table - Everyone can read
+CREATE POLICY "public_read_tags" ON tags
+  FOR SELECT
+  USING (true);
+
+-- Comments table - Everyone can read, authenticated users can insert
+CREATE POLICY "public_read_comments" ON project_comments
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "authenticated_insert_comments" ON project_comments
+  FOR INSERT
+  WITH CHECK (true);
+
+-- Downloads table - Everyone can insert (for tracking)
+CREATE POLICY "authenticated_insert_downloads" ON project_downloads
+  FOR INSERT
+  WITH CHECK (true);
+
+-- Views table - Everyone can insert (for tracking)
+CREATE POLICY "authenticated_insert_views" ON project_views
+  FOR INSERT
+  WITH CHECK (true);
+
+-- Versions table - Everyone can read
+CREATE POLICY "public_read_versions" ON project_versions
+  FOR SELECT
+  USING (true);
+
+-- Analytics table - Everyone can read
+CREATE POLICY "public_read_analytics" ON project_analytics
+  FOR SELECT
+  USING (true);
+ALTER TABLE project_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE project_views ENABLE ROW LEVEL SECURITY;
+
 -- Create policies for public/authenticated access (idempotent)
 
 -- tags: public SELECT
