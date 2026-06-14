@@ -1,25 +1,16 @@
 # 🚀 Quick Setup for New Features
 
-## ⚠️ IMPORTANT: Full Setup Required
-
-This setup involves **both backend (Supabase) AND frontend (Storage RLS policies)**. 
-If you skip any step, the app **will not work**!
-
-**Most common error:** "403 Unauthorized" during file upload = Storage Bucket RLS policies not configured (see Step 2)
-
----
-
 ## What You Just Got
 
 ✅ **Comments & Discussions** - Users can discuss projects  
 ✅ **Analytics Dashboard** - Track downloads, views, comments  
 ✅ **Download Tracking** - Know who downloaded what version  
 ✅ **Project Versioning** - Upload updates, maintain version history  
-✅ **Real File Storage** - Upload & download actual project files (.zip, .tar, .gz, .rar, .html)
+✅ **File Support** - Upload project files (.zip, .tar, .gz, .rar, .html) as text, download as index.html
 
 ---
 
-## ⚡ 4-Step Setup
+## ⚡ 3-Step Setup (SIMPLE!)
 
 ### Step 1: Update Supabase Database
 
@@ -36,67 +27,36 @@ This creates 5 new tables:
 - `project_downloads` - Download logs
 - `project_views` - View tracking
 
-### Step 2: Create Storage Buckets & Configure RLS Policies
-
-1. In Supabase, go to **Storage** section
-2. Create **two new buckets**:
-
-**Bucket 1: tag_icons**
-- Click **New Bucket**
-- Name: `tag_icons`
-- Uncheck "Private bucket"
-- Click **Create**
-
-**Bucket 2: mono-projects-files** ⭐ (For project uploads!)
-- Click **New Bucket**
-- Name: `mono-projects-files`
-- Uncheck "Private bucket"
-- Click **Create**
-
-**3. Configure Storage RLS Policies**
-
-For each bucket (`tag_icons` and `mono-projects-files`):
-
-a) Go to **Storage** → Click the bucket → **Policies**
-b) Create a **SELECT policy** (for reading):
-   - Click **New Policy** → **For SELECT**
-   - Name: `public_read`
-   - Choose template: **Enable read access for all users**
-   - Click **Review** → **Save policy**
-
-c) Create an **INSERT policy** (for uploading):
-   - Click **New Policy** → **For INSERT**
-   - Name: `public_insert`
-   - Choose template: **Enable insert access for authenticated users**
-   - Click **Review** → **Save policy**
-
-Now your buckets are ready for file uploads & downloads!
-
-### Step 3: Hard Refresh Browser
+### Step 2: Hard Refresh Browser
 
 1. **Ctrl+Shift+Delete** (Windows) or **Cmd+Shift+Delete** (Mac)
 2. Go to **Application → Storage**
 3. Clear all caches
 4. **Ctrl+F5** (Windows) or **Cmd+Shift+R** (Mac)
 
-### Step 4: Test Features
+### Step 3: Test Features
 
 1. **Open `index.html`** in browser
 2. **Create a test project** (as admin: Maxilicious20)
-   - Upload a test .zip file
-   - The file will be stored in `mono-projects-files` bucket
-3. **Click "View Details"** on the project
-4. **Click "Download"** - you should get the original project file, not a .txt!
+   - Upload any .html, .zip, .tar, .gz, or .rar file
+   - File content will be stored in database as text
+3. **Click "View Details"** on the project card
+4. **Click "Download"** - You get `index.html` with the file content
 5. You should see:
    - ✅ Analytics stats
    - ✅ Version selector
    - ✅ Comments section
    - ✅ (As admin) Update form
-   - ✅ Real file downloads
+   - ✅ Real file downloads as index.html
 
 ---
 
-## 🎯 Using the Features
+## 🎯 How It Works
+
+- **Upload**: Any file (`.html`, `.zip`, etc.) → Converted to text → Stored in database
+- **Download**: Text from database → Saved as `index.html` → User gets the file
+
+No Storage buckets needed! 🎉
 
 ### For Regular Users
 

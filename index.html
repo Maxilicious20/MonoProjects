@@ -433,63 +433,26 @@
       }
     }
 
-    // Upload file to Supabase Storage
-    async function uploadFileToStorage(file, storagePath) {
-      const url = `${SUPABASE_URL}/storage/v1/object/mono-projects-files/${storagePath}`;
-      
-      try {
-        const formData = new FormData();
-        formData.append('', file);
-        
-        const options = {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          },
-          body: file
-        };
-        
-        const response = await fetch(url, options);
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Upload response:", errorText);
-          throw new Error(`Upload failed: ${errorText}`);
-        }
-        
-        return { 
-          path: storagePath, 
-          url: `${SUPABASE_URL}/storage/v1/object/public/mono-projects-files/${storagePath}`,
-          name: file.name
-        };
-      } catch (err) {
-        console.error("Storage upload error:", err);
-        throw err;
-      }
+    // Convert file to text content
+    async function fileToText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
     }
 
-    // Download file from Supabase Storage
-    async function downloadFileFromStorage(filePath, fileName) {
-      // Construct the full storage URL
-      const url = `${SUPABASE_URL}/storage/v1/object/public/mono-projects-files/${filePath}`;
-      
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Download failed: ${response.statusText}`);
-        }
-        const blob = await response.blob();
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName || 'project_file';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      } catch (err) {
-        console.error("Storage download error:", err);
-        throw err;
-      }
+    // Create downloadable file from text
+    function downloadTextAsFile(text, fileName) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
     }
 
     // Dynamic state management
@@ -1294,15 +1257,7 @@ Mono Projects Repository - Secure Archive Stream.`;
         document.getElementById('projImagePreview').innerHTML = '<i class="fa-solid fa-image text-neutral-600 text-3xl"></i>';
       } catch (err) {
         console.error("Upload/save project failure:", err);
-        
-        // Check if it's a Storage RLS policy error
-        if (err.message && err.message.includes('403')) {
-          showToast("⚠️ Storage RLS not configured! Follow Step 2 in QUICK_SETUP.md to set Storage Bucket Policies", "error");
-        } else if (err.message && err.message.includes('Unauthorized')) {
-          showToast("❌ Storage Bucket RLS policy issue - Check QUICK_SETUP.md Step 2", "error");
-        } else {
-          showToast("Error uploading or saving project. Check browser console.", "error");
-        }
+        showToast("Error saving project. Check browser console.", "error");
       }
     }
     window.handleUploadSubmit = handleUploadSubmit;
@@ -1588,33 +1543,27 @@ Mono Projects Repository - Secure Archive Stream.`;
           );
         }
 
-        // Determine which file to download
-        let fileUrl = currentProjectDetail.file_url;
-        let fileName = currentProjectDetail.file_name || `${currentProjectDetail.name.replace(/[^a-z0-9]/gi, '_')}_v${versionNum || '1'}.zip`;
+        // Get file content
+        let fileContent = currentProjectDetail.file_content;
         
         if (versionNum > 0) {
           const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}&version_number=eq.${versionNum}`);
           if (versions && versions.length > 0) {
             const version = versions[0];
-            // Use version file if available, otherwise use original
-            if (version.file_url) {
-              fileUrl = version.file_url;
-              fileName = version.file_name || fileName;
+            if (version.file_content) {
+              fileContent = version.file_content;
             }
           }
         }
 
-        // Download from Storage
-        if (!fileUrl) {
+        if (!fileContent) {
           showToast("No project file available for download.", "error");
           return;
         }
 
-        showToast(`Downloading: ${fileName}`, "info");
-        // Use the full file path stored in the database
-        await downloadFileFromStorage(currentProjectDetail.file_path, fileName);
-        
-        showToast(`Downloaded: ${fileName}`, "success");
+        showToast(`Downloading: index.html`, "info");
+        downloadTextAsFile(fileContent, 'index.html');
+        showToast(`Downloaded: index.html`, "success");
       } catch (err) {
         console.error("Download error:", err);
         showToast("Error processing download.", "error");
