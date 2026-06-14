@@ -315,30 +315,41 @@
   <!-- Toast Notification System -->
   <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Firebase & App Logic Modules -->
+  <!-- Supabase & App Logic Modules -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Setup environments and configurations
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mono-projects';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "mock-api-key",
-      authDomain: "mock-auth-domain",
-      projectId: "mock-project-id",
-      storageBucket: "mock-storage-bucket",
-      messagingSenderId: "mock-sender-id",
-      appId: "mock-app-id"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    // Supabase configuration
+    const SUPABASE_URL = "https://tbrbazbrisyufuxhtgws.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRicmJhemJyaXN5dWZ1eGh0Z3dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyODQ1ODksImV4cCI6MjA5Njg2MDU4OX0.-NzctCSmODMs-YkJFsmeA_W72i9PfWvf1aZHrXZaThA";
+    
+    // Helper function to make API calls to Supabase
+    async function supabaseRequest(endpoint, method = 'GET', body = null) {
+      const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+      const options = {
+        method,
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        }
+      };
+      
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
+      
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || `Request failed: ${response.statusText}`);
+      }
+      
+      const text = await response.text();
+      return text ? JSON.parse(text) : null;
+    }
 
     // Dynamic state management
     let state = {
-      firebaseUser: null,
       currentUserAccount: null, 
       projects: [],
       tags: [], // Dynamically loaded tags!
@@ -413,61 +424,33 @@
     window.clearUserSession = clearUserSession;
 
     async function initApp() {
-      // Sign in anonymously to authorized Firestore access
-      try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          state.firebaseUser = await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          state.firebaseUser = await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.warn("Firestore Auth setup offline mode active:", err);
-      }
-
       // Initialize session profile
       initLocalStorageUser();
 
-      // Listen to Dynamic Tags Collection (Realtime)
+      // Load tags from Supabase
       try {
-        const tagsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tags');
-        onSnapshot(tagsCollectionRef, (snapshot) => {
-          const tagsList = [];
-          snapshot.forEach((doc) => {
-            tagsList.push({ id: doc.id, ...doc.data() });
-          });
-          state.tags = tagsList;
-          renderTagPills();
-          renderFormTags();
-          renderModalTagsList();
-          renderProjects(); // Re-render to pair newly synced tags accurately
-        }, (error) => {
-          console.error("Tags fetching error:", error);
-          state.tags = [];
-          renderTagPills();
-          renderFormTags();
-          renderModalTagsList();
-        });
-      } catch (e) {
-        console.warn("Tags listener attachment failure:", e);
+        const tagsList = await supabaseRequest('tags?order=created_at.desc');
+        state.tags = Array.isArray(tagsList) ? tagsList : [];
+        renderTagPills();
+        renderFormTags();
+        renderModalTagsList();
+      } catch (error) {
+        console.error("Tags fetching error:", error);
+        state.tags = [];
+        renderTagPills();
+        renderFormTags();
+        renderModalTagsList();
       }
 
-      // Listen to Projects Collection (Realtime)
+      // Load projects from Supabase
       try {
-        const projectsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
-        onSnapshot(projectsCollectionRef, (snapshot) => {
-          const projectsList = [];
-          snapshot.forEach((doc) => {
-            projectsList.push({ id: doc.id, ...doc.data() });
-          });
-          state.projects = projectsList;
-          renderProjects();
-        }, (error) => {
-          console.error("Projects stream error:", error);
-          state.projects = [];
-          renderProjects();
-        });
-      } catch (e) {
-        console.warn("Projects streaming bypass initialized:", e);
+        const projectsList = await supabaseRequest('projects?order=created_at.desc');
+        state.projects = Array.isArray(projectsList) ? projectsList : [];
+        renderProjects();
+      } catch (error) {
+        console.error("Projects stream error:", error);
+        state.projects = [];
+        renderProjects();
       }
     }
 
@@ -589,13 +572,13 @@
         }).join(' ');
 
         // Pro system label indicator
-        const proBadge = proj.isPro ? `
+        const proBadge = proj.is_pro ? `
           <span class="bg-brand-gold/10 text-brand-gold border border-brand-gold/20 text-[10px] uppercase font-extrabold tracking-wider px-2 py-1 rounded-lg flex items-center gap-1">
             <i class="fa-solid fa-circle-nodes"></i> PRO DEPLOYMENT
           </span>
         ` : '';
 
-        const thumbUrl = proj.imageUrl || 'image_0ecb52.jpg';
+        const thumbUrl = proj.image_url || 'image_0ecb52.jpg';
 
         return `
           <div class="bg-brand-card hover:bg-brand-cardHover border border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-accent/5 flex flex-col group relative">
@@ -692,7 +675,7 @@ Mono Projects Repository - Secure Archive Stream.`;
 
       if (state.currentUserAccount) {
         const username = state.currentUserAccount.username;
-        const isAdmin = state.currentUserAccount.isAdmin;
+        const isAdmin = state.currentUserAccount.is_admin;
 
         userSection.innerHTML = `
           <div class="flex items-center gap-2">
@@ -739,13 +722,11 @@ Mono Projects Repository - Secure Archive Stream.`;
       errorMsg.classList.add('hidden');
 
       try {
-        const docId = usernameInput.toLowerCase(); 
-        const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', docId);
-        const userSnap = await getDoc(userDocRef);
-
         if (state.isSignUpMode) {
-          // Strict rule: Username is unique and can only be used once
-          if (userSnap.exists()) {
+          // Check if username already exists
+          const existingUsers = await supabaseRequest(`accounts?username=eq.${encodeURIComponent(usernameInput)}`);
+          
+          if (existingUsers && existingUsers.length > 0) {
             errorMsg.textContent = `Username "${usernameInput}" is already taken. Please choose another one.`;
             errorMsg.classList.remove('hidden');
             return;
@@ -756,24 +737,26 @@ Mono Projects Repository - Secure Archive Stream.`;
           const newAccount = {
             username: usernameInput,
             password: passwordInput, 
-            isAdmin: isAdmin,
-            createdAt: new Date().toISOString()
+            is_admin: isAdmin,
+            created_at: new Date().toISOString()
           };
 
-          await setDoc(userDocRef, newAccount);
+          await supabaseRequest('accounts', 'POST', newAccount);
           saveUserSession(newAccount);
           showToast(`Account "${usernameInput}" created successfully!`, "success");
           closeAuthModal();
 
         } else {
           // Sign In check
-          if (!userSnap.exists()) {
+          const existingUsers = await supabaseRequest(`accounts?username=eq.${encodeURIComponent(usernameInput)}`);
+          
+          if (!existingUsers || existingUsers.length === 0) {
             errorMsg.textContent = "Account not found. Please sign up.";
             errorMsg.classList.remove('hidden');
             return;
           }
 
-          const existingUser = userSnap.data();
+          const existingUser = existingUsers[0];
           if (existingUser.password !== passwordInput) {
             errorMsg.textContent = "Incorrect password. Please try again.";
             errorMsg.classList.remove('hidden');
@@ -832,7 +815,7 @@ Mono Projects Repository - Secure Archive Stream.`;
     window.toggleAuthMode = toggleAuthMode;
 
     function openTagsModal() {
-      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+      if (!state.currentUserAccount || !state.currentUserAccount.is_admin) {
         showToast("Unauthorised access.", "error");
         return;
       }
@@ -848,7 +831,7 @@ Mono Projects Repository - Secure Archive Stream.`;
 
     async function handleTagSubmit(e) {
       e.preventDefault();
-      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) return;
+      if (!state.currentUserAccount || !state.currentUserAccount.is_admin) return;
 
       const tagNameInput = document.getElementById('tagName').value.trim();
       const tagIconInput = document.getElementById('tagIcon').value;
@@ -866,24 +849,40 @@ Mono Projects Repository - Secure Archive Stream.`;
         name: tagNameInput,
         icon: tagIconInput,
         color: tagColorInput,
-        createdAt: new Date().toISOString()
+        created_at: new Date().toISOString()
       };
 
       try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tags', tagId), newTag);
+        await supabaseRequest('tags', 'POST', newTag);
+        
+        // Reload tags
+        const tagsList = await supabaseRequest('tags?order=created_at.desc');
+        state.tags = Array.isArray(tagsList) ? tagsList : [];
+        renderTagPills();
+        renderFormTags();
+        renderModalTagsList();
+        
         showToast(`Tag "${tagNameInput}" successfully published!`, "success");
         document.getElementById('tagForm').reset();
       } catch (err) {
         console.error("Save tag error:", err);
-        showToast("Error writing tag to Firestore.", "error");
+        showToast("Error writing tag to Supabase.", "error");
       }
     }
     window.handleTagSubmit = handleTagSubmit;
 
     async function deleteTag(tagId) {
-      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) return;
+      if (!state.currentUserAccount || !state.currentUserAccount.is_admin) return;
       try {
-        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tags', tagId));
+        await supabaseRequest(`tags?id=eq.${encodeURIComponent(tagId)}`, 'DELETE');
+        
+        // Reload tags
+        const tagsList = await supabaseRequest('tags?order=created_at.desc');
+        state.tags = Array.isArray(tagsList) ? tagsList : [];
+        renderTagPills();
+        renderFormTags();
+        renderModalTagsList();
+        
         showToast("Tag removed from list.", "info");
       } catch (err) {
         console.error("Delete tag failure:", err);
@@ -915,7 +914,7 @@ Mono Projects Repository - Secure Archive Stream.`;
     }
 
     function openUploadModal() {
-      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+      if (!state.currentUserAccount || !state.currentUserAccount.is_admin) {
         showToast("Administrative authorisation required.", "error");
         return;
       }
@@ -944,7 +943,7 @@ Mono Projects Repository - Secure Archive Stream.`;
 
     async function handleUploadSubmit(e) {
       e.preventDefault();
-      if (!state.currentUserAccount || !state.currentUserAccount.isAdmin) {
+      if (!state.currentUserAccount || !state.currentUserAccount.is_admin) {
         showToast("Action forbidden.", "error");
         return;
       }
@@ -973,16 +972,22 @@ Mono Projects Repository - Secure Archive Stream.`;
       const newProj = {
         id: projId,
         name: name,
-        imageUrl: thumb,
+        image_url: thumb,
         tags: checkedTags,
-        isPro: isPro,
-        updatedAt: currentStamp,
+        is_pro: isPro,
+        updated_at: currentStamp,
         content: content || "Source deployment instructions.",
-        createdBy: state.currentUserAccount.username
+        created_by: state.currentUserAccount.username
       };
 
       try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId), newProj);
+        await supabaseRequest('projects', 'POST', newProj);
+        
+        // Reload projects
+        const projectsList = await supabaseRequest('projects?order=created_at.desc');
+        state.projects = Array.isArray(projectsList) ? projectsList : [];
+        renderProjects();
+        
         showToast(`Project "${name}" published successfully!`, "success");
         closeUploadModal();
         document.getElementById('uploadForm').reset();
