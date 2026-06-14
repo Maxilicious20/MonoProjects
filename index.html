@@ -212,7 +212,14 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Custom Icon Upload (Optional)</label>
+            <input type="file" id="tagIconFile" accept="image/*" class="w-full bg-brand-black text-white text-xs rounded-xl px-3 py-2 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none file:mr-2 file:bg-brand-accent file:text-black file:px-3 file:py-1 file:rounded-lg file:border-0 file:font-bold file:text-xs" />
+            <div id="tagIconPreview" class="w-12 h-12 rounded-lg bg-brand-black border border-neutral-800 flex items-center justify-center mt-2">
+              <i class="fa-solid fa-image text-neutral-600 text-xl"></i>
+            </div>
+          </div>
           <div>
             <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Accent Theme Color</label>
             <div class="relative">
@@ -221,7 +228,6 @@
                 <option value="indigo">Indigo/Purple</option>
                 <option value="emerald">Emerald/Green</option>
                 <option value="amber">Amber/Orange</option>
-                <option value="rose">Rose/Pink</option>
                 <option value="violet">Violet/Lavender</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-400">
@@ -309,6 +315,119 @@
           Publish & Save Project
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Project Details Modal -->
+  <div id="projectDetailsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden transition-opacity duration-300">
+    <div class="bg-brand-card border border-neutral-800 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center p-6 border-b border-neutral-800">
+        <div>
+          <h2 id="detailProjectName" class="text-2xl font-bold text-white"></h2>
+          <p id="detailProjectCreator" class="text-xs text-neutral-400 mt-1"></p>
+        </div>
+        <button onclick="closeProjectDetailsModal()" class="text-neutral-500 hover:text-white transition-colors">
+          <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (scrollable) -->
+      <div class="overflow-y-auto flex-1 p-6 space-y-6">
+        
+        <!-- Project Cover Image -->
+        <div class="aspect-video w-full rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
+          <img id="detailProjectImage" src="" alt="" class="w-full h-full object-cover" />
+        </div>
+
+        <!-- Project Description & Tags -->
+        <div>
+          <h3 class="text-sm font-bold text-brand-accent mb-2 uppercase">Description</h3>
+          <p id="detailProjectContent" class="text-sm text-neutral-300 line-clamp-4"></p>
+        </div>
+
+        <!-- Analytics Stats -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg text-center">
+            <div class="text-2xl font-bold text-brand-accent" id="statDownloads">0</div>
+            <div class="text-xs text-neutral-400 mt-1">Downloads</div>
+          </div>
+          <div class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg text-center">
+            <div class="text-2xl font-bold text-brand-accent" id="statViews">0</div>
+            <div class="text-xs text-neutral-400 mt-1">Views</div>
+          </div>
+          <div class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg text-center">
+            <div class="text-2xl font-bold text-brand-accent" id="statComments">0</div>
+            <div class="text-xs text-neutral-400 mt-1">Comments</div>
+          </div>
+        </div>
+
+        <!-- Version Selection -->
+        <div>
+          <h3 class="text-sm font-bold text-brand-accent mb-2 uppercase">Project Version</h3>
+          <div class="flex gap-2 items-center">
+            <select id="versionSelector" class="flex-1 bg-brand-black text-white text-sm rounded-xl px-4 py-2 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none">
+              <option>Loading versions...</option>
+            </select>
+            <span id="versionInfo" class="text-xs text-neutral-400">Latest</span>
+          </div>
+        </div>
+
+        <!-- Version Change Notes -->
+        <div id="versionChangeNotes" class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg">
+          <p id="versionDescription" class="text-sm text-neutral-300"></p>
+        </div>
+
+        <!-- Admin Update Section -->
+        <div id="adminUpdateSection" class="hidden border-t border-neutral-800 pt-4">
+          <h3 class="text-sm font-bold text-brand-accent mb-3 uppercase flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Create New Version
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">Update Description</label>
+              <textarea id="updateDescription" rows="3" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="What's new in this version?"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-neutral-400 uppercase mb-2">New Content / Files</label>
+              <textarea id="updateContent" rows="3" class="w-full bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="Updated configuration, new files, etc."></textarea>
+            </div>
+            <button onclick="publishNewVersion()" class="w-full bg-gradient-to-r from-brand-accent to-brand-purple text-white py-2 rounded-xl font-bold text-sm transition-all hover:opacity-90 active:scale-95">
+              Publish New Version
+            </button>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div>
+          <h3 class="text-sm font-bold text-brand-accent mb-3 uppercase">Community Comments (<span id="commentCount">0</span>)</h3>
+          
+          <!-- Post Comment Form (only if logged in) -->
+          <div id="commentForm" class="mb-4 hidden">
+            <div class="flex gap-2">
+              <textarea id="commentInput" rows="2" class="flex-1 bg-brand-black text-white text-sm rounded-xl px-4 py-3 border border-neutral-800 focus:ring-2 focus:ring-brand-accent focus:outline-none" placeholder="Share your thoughts..."></textarea>
+              <button onclick="postComment()" class="bg-brand-accent hover:opacity-90 text-black px-4 py-3 rounded-xl font-bold text-sm transition-all self-end">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Comments List -->
+          <div id="commentsList" class="space-y-3 max-h-64 overflow-y-auto">
+            <p class="text-xs text-neutral-500 italic">No comments yet. Be the first to share!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="border-t border-neutral-800 p-6 bg-brand-black/50 flex gap-3">
+        <button onclick="downloadProjectVersion()" class="flex-1 bg-white hover:bg-neutral-100 text-black py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-download"></i> Download
+        </button>
+        <button onclick="closeProjectDetailsModal()" class="px-6 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 py-3 rounded-xl font-bold text-sm transition-all">
+          Close
+        </button>
+      </div>
     </div>
   </div>
 
@@ -465,6 +584,14 @@
       }
     }
 
+    // Helper to render icon (custom or FontAwesome)
+    function renderTagIcon(tag, className = '') {
+      if (tag.icon_url) {
+        return `<img src="${tag.icon_url}" alt="${tag.name}" class="w-5 h-5 rounded-sm ${className}" onerror="this.onerror=null; this.outerHTML='<i class=\"fa-solid fa-tag\"></i>'" />`;
+      }
+      return `<i class="${tag.icon || 'fa-solid fa-tag'} ${className}"></i>`;
+    }
+
     function renderTagPills() {
       const container = document.getElementById('tagFiltersContainer');
       
@@ -490,7 +617,7 @@
                 ? 'bg-white text-black shadow-md' 
                 : 'bg-brand-card/80 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-800/60'
             }">
-              <i class="${tag.icon || 'fa-solid fa-tag'} ${isSelected ? 'text-black' : colorClass.text}"></i>
+              ${renderTagIcon(tag, isSelected ? 'text-black' : colorClass.text)}
               ${tag.name}
             </button>
           `;
@@ -533,7 +660,7 @@
           <label class="flex items-center gap-2 bg-brand-black px-3 py-2 rounded-lg border border-neutral-800 cursor-pointer text-xs font-medium hover:border-brand-accent transition-all select-none">
             <input type="checkbox" name="proj_tags" value="${tag.name}" class="rounded bg-brand-black border-neutral-700 text-brand-accent focus:ring-brand-accent" />
             <span class="flex items-center gap-1.5">
-              <i class="${tag.icon || 'fa-solid fa-tag'} ${colorClass.text}"></i>
+              ${renderTagIcon(tag, colorClass.text)}
               ${tag.name}
             </span>
           </label>
@@ -569,15 +696,25 @@
       }
 
       grid.innerHTML = filtered.map(proj => {
-        // Tag Badges mapped to our dynamic Firestore state
+        // Tag Badges mapped to our dynamic state
         const tagBadges = (proj.tags || []).map(tName => {
           const associatedTag = state.tags.find(t => t.name === tName);
-          const iconClass = associatedTag ? associatedTag.icon : 'fa-solid fa-tag';
           const style = getAccentColorTailwind(associatedTag ? associatedTag.color : 'indigo');
+          
+          let iconHTML = '';
+          if (associatedTag) {
+            if (associatedTag.icon_url) {
+              iconHTML = `<img src="${associatedTag.icon_url}" alt="${tName}" class="w-3.5 h-3.5 rounded-sm" onerror="this.onerror=null; this.outerHTML='<i class=\"fa-solid fa-tag\"></i>'" />`;
+            } else {
+              iconHTML = `<i class="${associatedTag.icon || 'fa-solid fa-tag'}"></i>`;
+            }
+          } else {
+            iconHTML = `<i class="fa-solid fa-tag"></i>`;
+          }
 
           return `
             <span class="${style.bg} border text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-lg flex items-center gap-1">
-              <i class="${iconClass}"></i> ${tName}
+              ${iconHTML} ${tName}
             </span>
           `;
         }).join(' ');
@@ -620,10 +757,13 @@
                 </p>
               </div>
 
-              <!-- Action Downloader -->
-              <div class="mt-5">
-                <button onclick="triggerFileDownload('${proj.id}')" class="w-full py-3 bg-white hover:bg-neutral-100 text-black font-extrabold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-md shadow-white/5">
-                  <i class="fa-solid fa-download"></i> Download Project
+              <!-- Action Buttons -->
+              <div class="mt-5 flex gap-2">
+                <button onclick="openProjectDetails('${proj.id}')" class="flex-1 py-3 bg-brand-accent hover:opacity-90 text-black font-extrabold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.01] active:scale-95 shadow-md shadow-brand-accent/25">
+                  <i class="fa-solid fa-eye"></i> View Details
+                </button>
+                <button onclick="triggerFileDownload('${proj.id}')" class="px-4 py-3 bg-white hover:bg-neutral-100 text-black font-extrabold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-md shadow-white/5">
+                  <i class="fa-solid fa-download"></i> Download
                 </button>
               </div>
             </div>
@@ -840,6 +980,58 @@ Mono Projects Repository - Secure Archive Stream.`;
     }
     window.closeTagsModal = closeTagsModal;
 
+    async function uploadTagIcon(file) {
+      if (!file) return null;
+      
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `tag_${Date.now()}.${fileExt}`;
+        const fileBuffer = await file.arrayBuffer();
+        
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('files', file);
+        
+        const url = `${SUPABASE_URL}/storage/v1/object/tag_icons/${fileName}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          },
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to upload icon');
+        }
+        
+        // Return public URL
+        return `${SUPABASE_URL}/storage/v1/object/public/tag_icons/${fileName}`;
+      } catch (err) {
+        console.error("Icon upload error:", err);
+        return null;
+      }
+    }
+
+    // Preview custom icon when file is selected
+    document.addEventListener('DOMContentLoaded', () => {
+      const iconFileInput = document.getElementById('tagIconFile');
+      if (iconFileInput) {
+        iconFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const preview = document.getElementById('tagIconPreview');
+              preview.innerHTML = `<img src="${event.target.result}" alt="Icon preview" class="w-full h-full object-cover rounded-lg" />`;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
+
     async function handleTagSubmit(e) {
       e.preventDefault();
       if (!state.currentUserAccount || !state.currentUserAccount.is_admin) return;
@@ -847,6 +1039,7 @@ Mono Projects Repository - Secure Archive Stream.`;
       const tagNameInput = document.getElementById('tagName').value.trim();
       const tagIconInput = document.getElementById('tagIcon').value;
       const tagColorInput = document.getElementById('tagColor').value;
+      const tagIconFile = document.getElementById('tagIconFile').files[0];
 
       if (!tagNameInput) {
         showToast("Tag Name is required.", "error");
@@ -854,11 +1047,18 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
 
       const tagId = tagNameInput.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+      
+      let iconUrl = null;
+      if (tagIconFile) {
+        showToast("Uploading icon...", "info");
+        iconUrl = await uploadTagIcon(tagIconFile);
+      }
 
       const newTag = {
         id: tagId,
         name: tagNameInput,
         icon: tagIconInput,
+        icon_url: iconUrl,
         color: tagColorInput,
         created_at: new Date().toISOString()
       };
@@ -875,6 +1075,7 @@ Mono Projects Repository - Secure Archive Stream.`;
         
         showToast(`Tag "${tagNameInput}" successfully published!`, "success");
         document.getElementById('tagForm').reset();
+        document.getElementById('tagIconPreview').innerHTML = '<i class="fa-solid fa-image text-neutral-600 text-xl"></i>';
       } catch (err) {
         console.error("Save tag error:", err);
         showToast("Error writing tag to Supabase.", "error");
@@ -914,7 +1115,8 @@ Mono Projects Repository - Secure Archive Stream.`;
         return `
           <div class="flex items-center justify-between bg-brand-black p-3 rounded-xl border border-neutral-800">
             <span class="${style.bg} border text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-2">
-              <i class="${tag.icon || 'fa-solid fa-tag'}"></i> ${tag.name}
+              ${renderTagIcon(tag)}
+              ${tag.name}
             </span>
             <button onclick="deleteTag('${tag.id}')" class="text-neutral-500 hover:text-red-500 text-xs transition-all p-1.5">
               <i class="fa-solid fa-trash-can"></i>
@@ -994,6 +1196,19 @@ Mono Projects Repository - Secure Archive Stream.`;
       try {
         await supabaseRequest('projects', 'POST', newProj);
         
+        // Create analytics record for new project
+        try {
+          await supabaseRequest('project_analytics', 'POST', {
+            project_id: projId,
+            total_downloads: 0,
+            total_views: 0,
+            total_comments: 0,
+            average_rating: 0
+          });
+        } catch (e) {
+          console.warn("Analytics creation note critical:", e);
+        }
+        
         // Reload projects
         const projectsList = await supabaseRequest('projects?order=created_at.desc');
         state.projects = Array.isArray(projectsList) ? projectsList : [];
@@ -1008,6 +1223,308 @@ Mono Projects Repository - Secure Archive Stream.`;
       }
     }
     window.handleUploadSubmit = handleUploadSubmit;
+
+    // ============== PROJECT DETAILS & ANALYTICS ==============
+
+    let currentProjectDetail = null;
+
+    async function openProjectDetails(projectId) {
+      const project = state.projects.find(p => p.id === projectId);
+      if (!project) return;
+
+      currentProjectDetail = project;
+
+      // Track view
+      try {
+        await supabaseRequest('project_views', 'POST', {
+          project_id: projectId,
+          username: state.currentUserAccount?.username || null
+        });
+      } catch (e) {
+        console.error("View tracking error:", e);
+      }
+
+      // Load and display project data
+      document.getElementById('detailProjectName').textContent = project.name;
+      document.getElementById('detailProjectCreator').textContent = `Created by ${project.created_by}`;
+      document.getElementById('detailProjectImage').src = project.image_url || 'image_0ecb52.jpg';
+      document.getElementById('detailProjectContent').textContent = project.content || 'No description available';
+
+      // Load analytics
+      await loadProjectAnalytics(projectId);
+
+      // Load versions
+      await loadProjectVersions(projectId);
+
+      // Load comments
+      await loadProjectComments(projectId);
+
+      // Show/hide admin section
+      const adminSection = document.getElementById('adminUpdateSection');
+      if (state.currentUserAccount?.is_admin) {
+        adminSection.classList.remove('hidden');
+      } else {
+        adminSection.classList.add('hidden');
+      }
+
+      // Show comment form if logged in
+      const commentForm = document.getElementById('commentForm');
+      if (state.currentUserAccount) {
+        commentForm.classList.remove('hidden');
+      } else {
+        commentForm.classList.add('hidden');
+      }
+
+      document.getElementById('projectDetailsModal').classList.remove('hidden');
+    }
+    window.openProjectDetails = openProjectDetails;
+
+    function closeProjectDetailsModal() {
+      document.getElementById('projectDetailsModal').classList.add('hidden');
+      currentProjectDetail = null;
+    }
+    window.closeProjectDetailsModal = closeProjectDetailsModal;
+
+    async function loadProjectAnalytics(projectId) {
+      try {
+        const analytics = await supabaseRequest(`project_analytics?project_id=eq.${encodeURIComponent(projectId)}`);
+        if (analytics && analytics.length > 0) {
+          const stat = analytics[0];
+          document.getElementById('statDownloads').textContent = stat.total_downloads || 0;
+          document.getElementById('statViews').textContent = stat.total_views || 0;
+          document.getElementById('statComments').textContent = stat.total_comments || 0;
+        }
+      } catch (err) {
+        console.error("Analytics load error:", err);
+      }
+    }
+
+    async function loadProjectVersions(projectId) {
+      try {
+        const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(projectId)}&order=version_number.desc`);
+        const selector = document.getElementById('versionSelector');
+        
+        if (!versions || versions.length === 0) {
+          selector.innerHTML = `<option value="0">Version 1 (Current)</option>`;
+          document.getElementById('versionDescription').textContent = 'Original release';
+          document.getElementById('versionInfo').textContent = 'Latest';
+          return;
+        }
+
+        selector.innerHTML = versions.map((v, i) => {
+          const isLatest = i === 0;
+          return `<option value="${v.version_number}" ${isLatest ? 'selected' : ''}>${isLatest ? 'Version ' + v.version_number + ' (Latest)' : 'Version ' + v.version_number}</option>`;
+        }).join('');
+
+        // Show first version details
+        selector.onchange = (e) => {
+          const vNum = parseInt(e.target.value);
+          const selectedVersion = versions.find(v => v.version_number === vNum);
+          if (selectedVersion) {
+            document.getElementById('versionDescription').textContent = selectedVersion.description || 'No description';
+            document.getElementById('versionInfo').textContent = `Updated: ${new Date(selectedVersion.created_at).toLocaleDateString()}`;
+          }
+        };
+
+        // Show first version
+        if (versions.length > 0) {
+          document.getElementById('versionDescription').textContent = versions[0].description || 'No description';
+          document.getElementById('versionInfo').textContent = `Updated: ${new Date(versions[0].created_at).toLocaleDateString()}`;
+        }
+      } catch (err) {
+        console.error("Versions load error:", err);
+      }
+    }
+
+    async function loadProjectComments(projectId) {
+      try {
+        const comments = await supabaseRequest(`project_comments?project_id=eq.${encodeURIComponent(projectId)}&order=created_at.desc`);
+        const container = document.getElementById('commentsList');
+        document.getElementById('commentCount').textContent = comments?.length || 0;
+
+        if (!comments || comments.length === 0) {
+          container.innerHTML = `<p class="text-xs text-neutral-500 italic">No comments yet. Be the first to share!</p>`;
+          return;
+        }
+
+        container.innerHTML = comments.map(comment => `
+          <div class="bg-brand-black/50 border border-neutral-800 p-3 rounded-lg">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-brand-accent">${comment.username}</span>
+              <span class="text-[10px] text-neutral-500">${new Date(comment.created_at).toLocaleDateString()}</span>
+            </div>
+            <p class="text-sm text-neutral-300">${comment.comment_text}</p>
+            <div class="flex gap-3 mt-2">
+              <button onclick="likeComment('${comment.id}')" class="text-xs text-neutral-500 hover:text-brand-accent transition-colors flex items-center gap-1">
+                <i class="fa-solid fa-heart"></i> ${comment.likes || 0}
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("Comments load error:", err);
+      }
+    }
+
+    async function postComment() {
+      if (!state.currentUserAccount) {
+        showToast("Please sign in to comment.", "error");
+        return;
+      }
+
+      if (!currentProjectDetail) return;
+
+      const commentText = document.getElementById('commentInput').value.trim();
+      if (!commentText) {
+        showToast("Comment cannot be empty.", "error");
+        return;
+      }
+
+      try {
+        await supabaseRequest('project_comments', 'POST', {
+          project_id: currentProjectDetail.id,
+          username: state.currentUserAccount.username,
+          comment_text: commentText
+        });
+
+        document.getElementById('commentInput').value = '';
+        await loadProjectComments(currentProjectDetail.id);
+        showToast("Comment posted!", "success");
+
+        // Update analytics
+        const analytics = await supabaseRequest(`project_analytics?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}`);
+        if (analytics && analytics.length > 0) {
+          await supabaseRequest(
+            `project_analytics?id=eq.${analytics[0].id}`,
+            'PATCH',
+            { total_comments: (analytics[0].total_comments || 0) + 1 }
+          );
+        }
+      } catch (err) {
+        console.error("Comment post error:", err);
+        showToast("Error posting comment.", "error");
+      }
+    }
+    window.postComment = postComment;
+
+    async function likeComment(commentId) {
+      showToast("Liked! (Feature coming soon)", "info");
+    }
+    window.likeComment = likeComment;
+
+    async function publishNewVersion() {
+      if (!state.currentUserAccount?.is_admin || !currentProjectDetail) return;
+
+      const description = document.getElementById('updateDescription').value.trim();
+      const content = document.getElementById('updateContent').value.trim();
+
+      if (!description && !content) {
+        showToast("Please enter update details.", "error");
+        return;
+      }
+
+      try {
+        // Get latest version number
+        const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}&order=version_number.desc&limit=1`);
+        const newVersionNum = (versions && versions.length > 0) ? versions[0].version_number + 1 : 1;
+
+        // Create new version
+        await supabaseRequest('project_versions', 'POST', {
+          project_id: currentProjectDetail.id,
+          version_number: newVersionNum,
+          description: description,
+          content: content,
+          created_by: state.currentUserAccount.username
+        });
+
+        // Update project's updated_at
+        const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+        const updateStamp = new Date().toLocaleDateString('en-US', dateOpts);
+        await supabaseRequest(
+          `projects?id=eq.${encodeURIComponent(currentProjectDetail.id)}`,
+          'PATCH',
+          { updated_at: updateStamp, content: content }
+        );
+
+        document.getElementById('updateDescription').value = '';
+        document.getElementById('updateContent').value = '';
+        await loadProjectVersions(currentProjectDetail.id);
+        showToast(`Version ${newVersionNum} published!`, "success");
+      } catch (err) {
+        console.error("Version publish error:", err);
+        showToast("Error publishing new version.", "error");
+      }
+    }
+    window.publishNewVersion = publishNewVersion;
+
+    async function downloadProjectVersion() {
+      if (!state.currentUserAccount) {
+        showToast("Please sign in to download.", "error");
+        openAuthModal(false);
+        return;
+      }
+
+      if (!currentProjectDetail) return;
+
+      const versionNum = parseInt(document.getElementById('versionSelector').value) || 0;
+
+      try {
+        // Track download
+        await supabaseRequest('project_downloads', 'POST', {
+          project_id: currentProjectDetail.id,
+          username: state.currentUserAccount.username,
+          version_number: versionNum
+        });
+
+        // Update analytics
+        const analytics = await supabaseRequest(`project_analytics?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}`);
+        if (analytics && analytics.length > 0) {
+          await supabaseRequest(
+            `project_analytics?id=eq.${analytics[0].id}`,
+            'PATCH',
+            { total_downloads: (analytics[0].total_downloads || 0) + 1 }
+          );
+        }
+
+        // Get version content
+        let contentToDownload = currentProjectDetail.content;
+        if (versionNum > 0) {
+          const versions = await supabaseRequest(`project_versions?project_id=eq.${encodeURIComponent(currentProjectDetail.id)}&version_number=eq.${versionNum}`);
+          if (versions && versions.length > 0) {
+            contentToDownload = versions[0].content;
+          }
+        }
+
+        // Trigger download
+        const fileContent = `=====================================================
+MONO PROJECTS ARCHIVE - ${currentProjectDetail.name}
+Version: ${versionNum || 'Current'}
+Downloaded By: ${state.currentUserAccount.username}
+Download Date: ${new Date().toLocaleString()}
+AI Models / Tags: ${(currentProjectDetail.tags || []).join(', ')}
+=====================================================
+
+--- PROJECT CONTENT & CONFIGURATION ---
+${contentToDownload || "Placeholder deployment file."}
+
+-----------------------------------------------------
+Mono Projects Repository - Secure Archive Stream.`;
+
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${currentProjectDetail.name.replace(/[^a-z0-9]/gi, '_')}_v${versionNum || '1'}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast(`Downloaded: ${link.download}`, "success");
+      } catch (err) {
+        console.error("Download error:", err);
+        showToast("Error processing download.", "error");
+      }
+    }
+    window.downloadProjectVersion = downloadProjectVersion;
 
     // Search and Input Event Handlers
     document.getElementById('searchInput').addEventListener('input', (e) => {
